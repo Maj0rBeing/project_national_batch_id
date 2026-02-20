@@ -23,10 +23,10 @@ PHOTO_SIZE = (180, 180)
 # Text positions (adjust to match your template)
 NAME_POSITION = (520, 400)
 ID_POSITION   = (520, 450)
-ROLE_POSITION = (520, 500)
+ROLE_POSITION = (520, 505)
 
-SCHOOL_POSITION   = (520, 560)
-DISTRICT_POSITION = (520, 630)
+SCHOOL_POSITION   = (520, 565)
+DISTRICT_POSITION = (520, 650)
 
 # Wrap area width for school/district text
 WRAP_MAX_WIDTH = 260
