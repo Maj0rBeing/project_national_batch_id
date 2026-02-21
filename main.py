@@ -3,7 +3,7 @@
 import csv
 import os
 import re
-from typing import List, Tuple, Optional
+from typing import List, Optional
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
@@ -20,17 +20,13 @@ OUTPUT_FOLDER = "output"
 PHOTO_POSITION = (520, 200)
 PHOTO_SIZE = (180, 180)
 
-# Text positions (adjust to match your template)
-NAME_POSITION = (520, 400)
-ID_POSITION   = (520, 450)
-ROLE_POSITION = (520, 505)
+# Text block starts below the photo and flows downward.
+TEXT_START_X = 520
+TEXT_START_Y = PHOTO_POSITION[1] + PHOTO_SIZE[1] + 16
 
-SCHOOL_POSITION   = (520, 565)
-DISTRICT_POSITION = (520, 650)
-
-# Wrap area width for school/district text
+# Wrap area width for all text blocks
 WRAP_MAX_WIDTH = 260
-WRAP_LINE_HEIGHT = 28
+SECTION_GAP = 10
 
 # Colors (hex supported by Pillow)
 COLOR_BLACK = "#000000"
@@ -46,10 +42,10 @@ FONT_ID_PATH: Optional[str] = None
 FONT_ROLE_PATH: Optional[str] = None
 FONT_SMALL_PATH: Optional[str] = None
 
-FONT_NAME_SIZE = 70
-FONT_ID_SIZE   = 50
-FONT_ROLE_SIZE = 50
-FONT_SMALL_SIZE = 26
+FONT_NAME_SIZE = 56
+FONT_ID_SIZE = 34
+FONT_ROLE_SIZE = 52
+FONT_SMALL_SIZE = 22
 
 
 # ==========================
@@ -73,9 +69,13 @@ def load_font(font_path: Optional[str], size: int) -> ImageFont.FreeTypeFont:
 
 
 def text_width(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont) -> int:
-    # Pillow 8+ supports textbbox
     bbox = draw.textbbox((0, 0), text, font=font)
     return bbox[2] - bbox[0]
+
+
+def text_height(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont) -> int:
+    bbox = draw.textbbox((0, 0), text, font=font)
+    return bbox[3] - bbox[1]
 
 
 def wrap_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont, max_width: int) -> List[str]:
@@ -106,6 +106,23 @@ def wrap_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont, m
     return lines
 
 
+def fit_font_size(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    font_path: Optional[str],
+    start_size: int,
+    max_width: int,
+    min_size: int = 14,
+) -> ImageFont.ImageFont:
+    size = start_size
+    while size >= min_size:
+        font = load_font(font_path, size)
+        if text_width(draw, text, font) <= max_width:
+            return font
+        size -= 1
+    return load_font(font_path, min_size)
+
+
 def open_photo_correct_orientation(path: str) -> Image.Image:
     # Fix EXIF rotation AND convert to RGBA to avoid paste issues
     img = Image.open(path)
@@ -132,42 +149,54 @@ def create_id_card(
     template = Image.open(template_path).convert("RGBA")
     draw = ImageDraw.Draw(template)
 
-    font_name = load_font(FONT_NAME_PATH, FONT_NAME_SIZE)
-    font_id   = load_font(FONT_ID_PATH, FONT_ID_SIZE)
-    font_role = load_font(FONT_ROLE_PATH, FONT_ROLE_SIZE)
+    font_name = fit_font_size(
+        draw=draw,
+        text=full_name.upper(),
+        font_path=FONT_NAME_PATH,
+        start_size=FONT_NAME_SIZE,
+        max_width=WRAP_MAX_WIDTH,
+        min_size=28,
+    )
+    font_id = load_font(FONT_ID_PATH, FONT_ID_SIZE)
+    font_role = fit_font_size(
+        draw=draw,
+        text=str(role).upper(),
+        font_path=FONT_ROLE_PATH,
+        start_size=FONT_ROLE_SIZE,
+        max_width=WRAP_MAX_WIDTH,
+        min_size=20,
+    )
     font_small = load_font(FONT_SMALL_PATH, FONT_SMALL_SIZE)
 
-    # Draw name (split into 2 lines if too long)
-    # You can keep it single-line if you prefer.
-    name_lines = wrap_text(draw, full_name.upper(), font_name, max_width=WRAP_MAX_WIDTH + 120)
-    y = NAME_POSITION[1]
+    y = TEXT_START_Y
+
+    name_lines = wrap_text(draw, full_name.upper(), font_name, max_width=WRAP_MAX_WIDTH)
     for ln in name_lines[:2]:
-        draw.text((NAME_POSITION[0], y), ln, fill=COLOR_BLACK, font=font_name)
-        y += int(FONT_NAME_SIZE * 0.9)
+        draw.text((TEXT_START_X, y), ln, fill=COLOR_BLACK, font=font_name)
+        y += text_height(draw, ln, font_name) + 2
+    y += SECTION_GAP
 
-    # ID (you were using numeric IDs; if you don't have it, keep blank in CSV or add a column)
-    # Here, we generate an ID based on lastname_firstname if you don't have one:
     generated_id = safe_filename(f"{lastname}_{firstname}").upper()
-    draw.text(ID_POSITION, f"ID: {generated_id}", fill=COLOR_BLACK, font=font_id)
+    id_line = f"ID: {generated_id}"
+    draw.text((TEXT_START_X, y), id_line, fill=COLOR_BLACK, font=font_id)
+    y += text_height(draw, id_line, font_id) + SECTION_GAP
 
-    # Role
-    draw.text(ROLE_POSITION, str(role).upper(), fill=COLOR_RED, font=font_role)
+    role_line = str(role).upper()
+    draw.text((TEXT_START_X, y), role_line, fill=COLOR_RED, font=font_role)
+    y += text_height(draw, role_line, font_role) + SECTION_GAP
 
-    # School wrap
     school_text = f"SCHOOL: {school}".upper().strip()
     school_lines = wrap_text(draw, school_text, font_small, WRAP_MAX_WIDTH)
-    y = SCHOOL_POSITION[1]
     for ln in school_lines[:3]:
-        draw.text((SCHOOL_POSITION[0], y), ln, fill=COLOR_BLACK, font=font_small)
-        y += WRAP_LINE_HEIGHT
+        draw.text((TEXT_START_X, y), ln, fill=COLOR_BLACK, font=font_small)
+        y += text_height(draw, ln, font_small) + 2
+    y += 4
 
-    # District wrap
     district_text = f"DISTRICT: {district}".upper().strip()
     district_lines = wrap_text(draw, district_text, font_small, WRAP_MAX_WIDTH)
-    y = DISTRICT_POSITION[1]
     for ln in district_lines[:3]:
-        draw.text((DISTRICT_POSITION[0], y), ln, fill=COLOR_BLACK, font=font_small)
-        y += WRAP_LINE_HEIGHT
+        draw.text((TEXT_START_X, y), ln, fill=COLOR_BLACK, font=font_small)
+        y += text_height(draw, ln, font_small) + 2
 
     # Photo
     photo_path = os.path.join(photo_folder, photo_filename) if photo_filename else ""
