@@ -4,6 +4,7 @@ import csv
 import json
 import os
 import re
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -129,6 +130,14 @@ def initialize_district_registries(registry_folder: str) -> None:
 
 def format_assigned_id(district_number: int, sequence_number: int) -> str:
     return f"D{district_number:02d}-{sequence_number:04d}"
+
+
+def district_output_folder(root_output_folder: str, district_number: int, batch_timestamp: str) -> str:
+    return os.path.join(
+        root_output_folder,
+        f"district_{district_number:02d}",
+        f"batch_{batch_timestamp}",
+    )
 
 
 def get_or_create_district_id(
@@ -358,6 +367,8 @@ def batch_generate_id_cards(csv_file: str):
     if not os.path.exists(TEMPLATE_PATH):
         raise FileNotFoundError(f"Missing template: {TEMPLATE_PATH} (put id_template.png in the project root)")
     initialize_district_registries(DISTRICT_REGISTRY_FOLDER)
+    batch_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    print(f"Batch timestamp: {batch_timestamp}")
 
     # IMPORTANT: utf-8-sig removes BOM (\\ufeff) from 'firstname'
     with open(csv_file, newline="", encoding="utf-8-sig") as f:
@@ -405,7 +416,7 @@ def batch_generate_id_cards(csv_file: str):
                     photo_filename=photo,
                     template_path=TEMPLATE_PATH,
                     photo_folder=PHOTO_FOLDER,
-                    output_folder=OUTPUT_FOLDER,
+                    output_folder=district_output_folder(OUTPUT_FOLDER, district_number, batch_timestamp),
                 )
 
             except Exception as e:
