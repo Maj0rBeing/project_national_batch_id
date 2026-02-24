@@ -17,6 +17,7 @@ CSV_FILE = "id_data.csv"
 TEMPLATE_PATH = "id_template.png"
 PHOTO_FOLDER = "photos"
 OUTPUT_FOLDER = "output"
+REPORT_FOLDER = "report"
 DISTRICT_REGISTRY_FOLDER = "district_id_registry"
 DISTRICT_MIN = 1
 DISTRICT_MAX = 15
@@ -138,6 +139,60 @@ def district_output_folder(root_output_folder: str, district_number: int, batch_
         f"district_{district_number:02d}",
         f"batch_{batch_timestamp}",
     )
+
+
+def district_report_folder(root_report_folder: str, district_number: int) -> str:
+    return os.path.join(root_report_folder, f"district_{district_number:02d}")
+
+
+def create_batch_report_buckets() -> Dict[int, List[Dict[str, str]]]:
+    return {district_number: [] for district_number in range(DISTRICT_MIN, DISTRICT_MAX + 1)}
+
+
+def write_excel_reports(
+    root_report_folder: str,
+    batch_timestamp: str,
+    rows_by_district: Dict[int, List[Dict[str, str]]],
+) -> None:
+    try:
+        from openpyxl import Workbook
+    except ModuleNotFoundError as e:
+        raise ModuleNotFoundError(
+            "Missing dependency 'openpyxl'. Install it (for example: pip install -r requirements.txt) "
+            "to generate district Excel reports."
+        ) from e
+
+    headers = [
+        "batch_timestamp",
+        "district_number",
+        "district_text",
+        "assigned_id",
+        "firstname",
+        "lastname",
+        "role",
+        "school",
+        "photo",
+        "output_file",
+    ]
+
+    for district_number in range(DISTRICT_MIN, DISTRICT_MAX + 1):
+        district_rows = rows_by_district.get(district_number, [])
+        if not district_rows:
+            continue
+
+        district_folder = district_report_folder(root_report_folder, district_number)
+        os.makedirs(district_folder, exist_ok=True)
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = f"District {district_number}"
+        sheet.append(headers)
+
+        for row in district_rows:
+            sheet.append([row.get(header, "") for header in headers])
+
+        report_path = os.path.join(district_folder, f"batch_{batch_timestamp}.xlsx")
+        workbook.save(report_path)
+        print(f"Report: {report_path}")
 
 
 def get_or_create_district_id(
@@ -282,7 +337,7 @@ def create_id_card(
     template_path: str,
     photo_folder: str,
     output_folder: str,
-):
+) -> str:
     full_name = f"{firstname} {lastname}".strip()
 
     template = Image.open(template_path).convert("RGBA")
@@ -361,6 +416,7 @@ def create_id_card(
     out_path = os.path.join(output_folder, out_name)
     template.convert("RGB").save(out_path)
     print(f"Saved: {out_path}")
+    return out_path
 
 
 def batch_generate_id_cards(csv_file: str):
@@ -368,6 +424,7 @@ def batch_generate_id_cards(csv_file: str):
         raise FileNotFoundError(f"Missing template: {TEMPLATE_PATH} (put id_template.png in the project root)")
     initialize_district_registries(DISTRICT_REGISTRY_FOLDER)
     batch_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_rows_by_district = create_batch_report_buckets()
     print(f"Batch timestamp: {batch_timestamp}")
 
     # IMPORTANT: utf-8-sig removes BOM (\\ufeff) from 'firstname'
@@ -406,7 +463,7 @@ def batch_generate_id_cards(csv_file: str):
                     photo_filename=photo,
                 )
 
-                create_id_card(
+                output_path = create_id_card(
                     firstname=firstname,
                     lastname=lastname,
                     role=role,
@@ -418,9 +475,25 @@ def batch_generate_id_cards(csv_file: str):
                     photo_folder=PHOTO_FOLDER,
                     output_folder=district_output_folder(OUTPUT_FOLDER, district_number, batch_timestamp),
                 )
+                report_rows_by_district[district_number].append(
+                    {
+                        "batch_timestamp": batch_timestamp,
+                        "district_number": str(district_number),
+                        "district_text": district,
+                        "assigned_id": assigned_id,
+                        "firstname": firstname,
+                        "lastname": lastname,
+                        "role": role,
+                        "school": school,
+                        "photo": photo,
+                        "output_file": output_path,
+                    }
+                )
 
             except Exception as e:
                 print(f"[ERROR] Row {i} failed: {e}")
+
+    write_excel_reports(REPORT_FOLDER, batch_timestamp, report_rows_by_district)
 
 
 if __name__ == "__main__":

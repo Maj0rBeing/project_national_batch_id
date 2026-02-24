@@ -6,6 +6,7 @@ from pathlib import Path
 
 
 OUTPUT_FOLDER = "output"
+REPORT_FOLDER = "report"
 DISTRICT_REGISTRY_FOLDER = "district_id_registry"
 DISTRICT_MIN = 1
 DISTRICT_MAX = 15
@@ -32,6 +33,10 @@ def reset_folder(folder_path: Path) -> None:
 
 def reset_output_folder(project_root: Path) -> None:
     reset_folder(project_root / OUTPUT_FOLDER)
+
+
+def reset_report_folder(project_root: Path) -> None:
+    reset_folder(project_root / REPORT_FOLDER)
 
 
 def reset_district_registry(project_root: Path) -> None:
@@ -67,6 +72,7 @@ def main() -> None:
 
     project_root = Path(__file__).resolve().parent
     reset_output_folder(project_root)
+    reset_report_folder(project_root)
     reset_district_registry(project_root)
     print("Reset complete.")
 
