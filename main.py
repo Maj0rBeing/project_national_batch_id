@@ -1,9 +1,10 @@
 ﻿from __future__ import annotations
 
 import csv
+import json
 import os
 import re
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
@@ -15,6 +16,9 @@ CSV_FILE = "id_data.csv"
 TEMPLATE_PATH = "id_template.png"
 PHOTO_FOLDER = "photos"
 OUTPUT_FOLDER = "output"
+DISTRICT_REGISTRY_FOLDER = "district_id_registry"
+DISTRICT_MIN = 1
+DISTRICT_MAX = 15
 
 # Photo box (top-left corner where the photo will be pasted)
 PHOTO_POSITION = (520, 200)
@@ -55,6 +59,131 @@ def safe_filename(text: str) -> str:
     text = text.strip().replace(" ", "_")
     text = re.sub(r"[^A-Za-z0-9_\\-]+", "", text)
     return text or "unknown"
+
+
+def normalize_spaces(text: str) -> str:
+    return re.sub(r"\s+", " ", (text or "").strip())
+
+
+def normalize_person_key(firstname: str, lastname: str) -> str:
+    return f"{normalize_spaces(firstname).lower()}|{normalize_spaces(lastname).lower()}"
+
+
+def extract_district_number(district_text: str) -> int:
+    match = re.search(r"(\d+)", normalize_spaces(district_text))
+    if not match:
+        raise ValueError(f"District value '{district_text}' does not contain a number")
+
+    district_number = int(match.group(1))
+    if not (DISTRICT_MIN <= district_number <= DISTRICT_MAX):
+        raise ValueError(f"District number {district_number} is out of range ({DISTRICT_MIN}-{DISTRICT_MAX})")
+    return district_number
+
+
+def district_registry_path(registry_folder: str, district_number: int) -> str:
+    return os.path.join(registry_folder, f"district_{district_number:02d}.json")
+
+
+def default_district_registry(district_number: int) -> Dict[str, Any]:
+    return {
+        "district_number": district_number,
+        "district_label": f"District {district_number}",
+        "last_id_number": 0,
+        "records": {},
+    }
+
+
+def save_district_registry(registry_folder: str, district_number: int, data: Dict[str, Any]) -> None:
+    os.makedirs(registry_folder, exist_ok=True)
+    path = district_registry_path(registry_folder, district_number)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=True)
+
+
+def load_district_registry(registry_folder: str, district_number: int) -> Dict[str, Any]:
+    path = district_registry_path(registry_folder, district_number)
+    if not os.path.exists(path):
+        data = default_district_registry(district_number)
+        save_district_registry(registry_folder, district_number, data)
+        return data
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    data.setdefault("district_number", district_number)
+    data.setdefault("district_label", f"District {district_number}")
+    data.setdefault("last_id_number", 0)
+    data.setdefault("records", {})
+    if not isinstance(data["records"], dict):
+        data["records"] = {}
+    return data
+
+
+def initialize_district_registries(registry_folder: str) -> None:
+    os.makedirs(registry_folder, exist_ok=True)
+    for district_number in range(DISTRICT_MIN, DISTRICT_MAX + 1):
+        path = district_registry_path(registry_folder, district_number)
+        if not os.path.exists(path):
+            save_district_registry(registry_folder, district_number, default_district_registry(district_number))
+
+
+def format_assigned_id(district_number: int, sequence_number: int) -> str:
+    return f"D{district_number:02d}-{sequence_number:04d}"
+
+
+def get_or_create_district_id(
+    registry_folder: str,
+    district_number: int,
+    firstname: str,
+    lastname: str,
+    photo_filename: str,
+) -> str:
+    registry = load_district_registry(registry_folder, district_number)
+    records = registry.get("records", {})
+    person_key = normalize_person_key(firstname, lastname)
+    existing = records.get(person_key)
+
+    if isinstance(existing, dict) and existing.get("id_number"):
+        id_number = int(existing["id_number"])
+        existing.setdefault("id", format_assigned_id(district_number, id_number))
+        existing["firstname"] = firstname
+        existing["lastname"] = lastname
+        existing["photo"] = photo_filename
+        records[person_key] = existing
+        registry["records"] = records
+        registry["last_id_number"] = max(int(registry.get("last_id_number", 0)), id_number)
+        save_district_registry(registry_folder, district_number, registry)
+        return str(existing["id"])
+
+    max_existing = int(registry.get("last_id_number", 0))
+    for record in records.values():
+        if isinstance(record, dict):
+            try:
+                max_existing = max(max_existing, int(record.get("id_number", 0)))
+            except Exception:
+                pass
+
+    next_id_number = max_existing + 1
+    assigned_id = format_assigned_id(district_number, next_id_number)
+    records[person_key] = {
+        "firstname": firstname,
+        "lastname": lastname,
+        "photo": photo_filename,
+        "id_number": next_id_number,
+        "id": assigned_id,
+    }
+    registry["records"] = records
+    registry["last_id_number"] = next_id_number
+    save_district_registry(registry_folder, district_number, registry)
+    return assigned_id
+
+
+def get_csv_value(row: Dict[str, str], *keys: str) -> str:
+    for key in keys:
+        value = row.get(key)
+        if value:
+            return str(value).strip()
+    return ""
 
 
 def load_font(font_path: Optional[str], size: int) -> ImageFont.FreeTypeFont:
@@ -139,6 +268,7 @@ def create_id_card(
     role: str,
     school: str,
     district: str,
+    assigned_id: str,
     photo_filename: str,
     template_path: str,
     photo_folder: str,
@@ -176,8 +306,7 @@ def create_id_card(
         y += text_height(draw, ln, font_name) + 2
     y += SECTION_GAP
 
-    generated_id = safe_filename(f"{lastname}_{firstname}").upper()
-    id_line = f"ID: {generated_id}"
+    id_line = f"ID: {assigned_id}"
     draw.text((TEXT_START_X, y), id_line, fill=COLOR_BLACK, font=font_id)
     y += text_height(draw, id_line, font_id) + SECTION_GAP
 
@@ -228,6 +357,7 @@ def create_id_card(
 def batch_generate_id_cards(csv_file: str):
     if not os.path.exists(TEMPLATE_PATH):
         raise FileNotFoundError(f"Missing template: {TEMPLATE_PATH} (put id_template.png in the project root)")
+    initialize_district_registries(DISTRICT_REGISTRY_FOLDER)
 
     # IMPORTANT: utf-8-sig removes BOM (\\ufeff) from 'firstname'
     with open(csv_file, newline="", encoding="utf-8-sig") as f:
@@ -236,16 +366,34 @@ def batch_generate_id_cards(csv_file: str):
 
         for i, row in enumerate(reader, start=1):
             try:
-                firstname = (row.get("firstname") or "").strip()
-                lastname  = (row.get("lastname") or "").strip()
-                role      = (row.get("Role") or "").strip()
-                photo     = (row.get("Photo") or "").strip()
-                district  = (row.get("District") or "").strip()
-                school    = (row.get("School") or "").strip()
+                firstname = get_csv_value(row, "firstname", "Firstname", "FIRSTNAME")
+                lastname = get_csv_value(row, "lastname", "Lastname", "LASTNAME")
+                role = get_csv_value(row, "Role", "role", "ROLE")
+                photo = get_csv_value(row, "Photo", "photo", "PHOTO")
+                district = get_csv_value(row, "District", "district", "distrct", "Distrct", "DISTRICT")
+                school = get_csv_value(row, "School", "school", "SCHOOL")
 
                 if not firstname and not lastname:
                     print(f"[WARN] Row {i}: missing firstname/lastname - skipping")
                     continue
+
+                if not district:
+                    print(f"[WARN] Row {i}: missing district - skipping")
+                    continue
+
+                try:
+                    district_number = extract_district_number(district)
+                except ValueError as e:
+                    print(f"[WARN] Row {i}: {e} - skipping")
+                    continue
+
+                assigned_id = get_or_create_district_id(
+                    registry_folder=DISTRICT_REGISTRY_FOLDER,
+                    district_number=district_number,
+                    firstname=firstname,
+                    lastname=lastname,
+                    photo_filename=photo,
+                )
 
                 create_id_card(
                     firstname=firstname,
@@ -253,6 +401,7 @@ def batch_generate_id_cards(csv_file: str):
                     role=role,
                     school=school,
                     district=district,
+                    assigned_id=assigned_id,
                     photo_filename=photo,
                     template_path=TEMPLATE_PATH,
                     photo_folder=PHOTO_FOLDER,

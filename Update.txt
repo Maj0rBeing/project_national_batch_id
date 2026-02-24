@@ -1,0 +1,2 @@
+Update: lets update the program to automatically assign ID number based on given region [Range from Region 1 to Region 10 and GT] to the output photos, to begin lets create a local folder that generate a json file for each relative region
+, for every new photo and ID number is generated and stored in the JSON file 
