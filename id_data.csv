@@ -1,3 +1,2 @@
-﻿firstname,lastname,Role,Photo,District,School
-John,Smith,COACH,pp1.jpg,District 4,Example Secondary School
-Sally,Smith,COACH,pp1.jpg,District 4,Example Secondary School
+Timestamp,firstname,lastname,Role,School,District,Photo
+2/24/2026 15:35:54,John,Smith ,Athlete,Queens College,District-4,John_Smith_20260224_153558.jpg

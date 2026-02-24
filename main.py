@@ -23,19 +23,21 @@ DISTRICT_MIN = 1
 DISTRICT_MAX = 15
 
 # Photo box (top-left corner where the photo will be pasted)
-PHOTO_POSITION = (520, 200)
-PHOTO_SIZE = (180, 180)
+PHOTO_SIZE = (280, 280)
+CONTENT_CENTER_X = 400
+PHOTO_TOP_Y = 315
+PHOTO_POSITION = (CONTENT_CENTER_X - (PHOTO_SIZE[0] // 2), PHOTO_TOP_Y)
 
 # Text block starts below the photo and flows downward.
-TEXT_START_X = 520
+TEXT_START_X = CONTENT_CENTER_X - 130
 TEXT_START_Y = PHOTO_POSITION[1] + PHOTO_SIZE[1] + 16
 
 # Wrap area width for all text blocks
 WRAP_MAX_WIDTH = 260
-SECTION_GAP = 10
+SECTION_GAP = 15
 
 # Colors (hex supported by Pillow)
-COLOR_BLACK = "#000000"
+COLOR_BLACK = "#ffffff"
 COLOR_RED   = "#FF0000"
 
 # Fonts
@@ -271,6 +273,18 @@ def text_height(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont)
     return bbox[3] - bbox[1]
 
 
+def draw_centered_text(
+    draw: ImageDraw.ImageDraw,
+    center_x: int,
+    y: int,
+    text: str,
+    font: ImageFont.ImageFont,
+    fill: str,
+) -> None:
+    x = center_x - (text_width(draw, text, font) // 2)
+    draw.text((x, y), text, fill=fill, font=font)
+
+
 def wrap_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont, max_width: int) -> List[str]:
     # Word-wrap by measuring width
     words = text.split()
@@ -366,29 +380,29 @@ def create_id_card(
 
     name_lines = wrap_text(draw, full_name.upper(), font_name, max_width=WRAP_MAX_WIDTH)
     for ln in name_lines[:2]:
-        draw.text((TEXT_START_X, y), ln, fill=COLOR_BLACK, font=font_name)
+        draw_centered_text(draw, CONTENT_CENTER_X, y, ln, font_name, COLOR_BLACK)
         y += text_height(draw, ln, font_name) + 2
     y += SECTION_GAP
 
     id_line = f"ID: {assigned_id}"
-    draw.text((TEXT_START_X, y), id_line, fill=COLOR_BLACK, font=font_id)
+    draw_centered_text(draw, CONTENT_CENTER_X, y, id_line, font_id, COLOR_BLACK)
     y += text_height(draw, id_line, font_id) + SECTION_GAP
 
     role_line = str(role).upper()
-    draw.text((TEXT_START_X, y), role_line, fill=COLOR_RED, font=font_role)
+    draw_centered_text(draw, CONTENT_CENTER_X, y, role_line, font_role, COLOR_RED)
     y += text_height(draw, role_line, font_role) + SECTION_GAP
 
     school_text = f"SCHOOL: {school}".upper().strip()
     school_lines = wrap_text(draw, school_text, font_small, WRAP_MAX_WIDTH)
     for ln in school_lines[:3]:
-        draw.text((TEXT_START_X, y), ln, fill=COLOR_BLACK, font=font_small)
+        draw_centered_text(draw, CONTENT_CENTER_X, y, ln, font_small, COLOR_BLACK)
         y += text_height(draw, ln, font_small) + 2
     y += 4
 
     district_text = f"DISTRICT: {district}".upper().strip()
     district_lines = wrap_text(draw, district_text, font_small, WRAP_MAX_WIDTH)
     for ln in district_lines[:3]:
-        draw.text((TEXT_START_X, y), ln, fill=COLOR_BLACK, font=font_small)
+        draw_centered_text(draw, CONTENT_CENTER_X, y, ln, font_small, COLOR_BLACK)
         y += text_height(draw, ln, font_small) + 2
 
     # Photo
