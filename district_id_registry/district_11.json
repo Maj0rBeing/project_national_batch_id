@@ -1,14 +1,6 @@
 {
   "district_number": 11,
   "district_label": "District 11",
-  "last_id_number": 1,
-  "records": {
-    "nicholad|fraser": {
-      "firstname": "Nicholad",
-      "lastname": "Fraser",
-      "photo": "Nicholad_Fraser_20260224_162313.jpg",
-      "id_number": 1,
-      "id": "D11-001"
-    }
-  }
+  "last_id_number": 0,
+  "records": {}
 }

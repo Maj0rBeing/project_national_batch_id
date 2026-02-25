@@ -1,35 +1,6 @@
 {
   "district_number": 4,
   "district_label": "District 4",
-  "last_id_number": 4,
-  "records": {
-    "john|smith": {
-      "firstname": "John",
-      "lastname": "Smith",
-      "photo": "John_Smith_20260224_153558.jpg",
-      "id_number": 1,
-      "id": "D04-001"
-    },
-    "sally|smith": {
-      "firstname": "Sally",
-      "lastname": "Smith",
-      "photo": "pp1.jpg",
-      "id_number": 2,
-      "id": "D04-0002"
-    },
-    "max|smith": {
-      "firstname": "Max",
-      "lastname": "Smith",
-      "photo": "PP2.jpg",
-      "id_number": 3,
-      "id": "D04-0003"
-    },
-    "blue|smith": {
-      "firstname": "Blue",
-      "lastname": "Smith",
-      "photo": "pp1.jpg",
-      "id_number": 4,
-      "id": "D04-004"
-    }
-  }
+  "last_id_number": 0,
+  "records": {}
 }

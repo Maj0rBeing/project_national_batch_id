@@ -33,8 +33,8 @@ TEXT_START_X = CONTENT_CENTER_X - 130
 TEXT_START_Y = PHOTO_POSITION[1] + PHOTO_SIZE[1] + 16
 
 # Wrap area width for all text blocks
-WRAP_MAX_WIDTH = 260
-SECTION_GAP = 20
+WRAP_MAX_WIDTH = 350
+SECTION_GAP = 25
 
 # Colors (hex supported by Pillow)
 COLOR_BLACK = "#ffffff"
@@ -50,10 +50,10 @@ FONT_ID_PATH: Optional[str] = None
 FONT_ROLE_PATH: Optional[str] = None
 FONT_SMALL_PATH: Optional[str] = None
 
-FONT_NAME_SIZE = 56
-FONT_ID_SIZE = 34
-FONT_ROLE_SIZE = 52
-FONT_SMALL_SIZE = 22
+FONT_NAME_SIZE = 60
+FONT_ID_SIZE = 38
+FONT_ROLE_SIZE = 55
+FONT_SMALL_SIZE = 25
 
 
 # ==========================
@@ -488,7 +488,11 @@ def create_id_card(
         y += text_height(draw, ln, font_small) + 2
     y += 4
 
-    district_text = f"DISTRICT: {district}".upper().strip()
+    try:
+        district_display = str(extract_district_number(district))
+    except Exception:
+        district_display = str(district).strip()
+    district_text = f"DISTRICT: {district_display}".upper().strip()
     district_lines = wrap_text(draw, district_text, font_small, WRAP_MAX_WIDTH)
     for ln in district_lines[:3]:
         draw_centered_text(draw, CONTENT_CENTER_X, y, ln, font_small, COLOR_BLACK)
