@@ -8,7 +8,7 @@
       "lastname": "Smith",
       "photo": "John_Smith_20260224_153558.jpg",
       "id_number": 1,
-      "id": "D04-0001"
+      "id": "D04-001"
     },
     "sally|smith": {
       "firstname": "Sally",
@@ -29,7 +29,7 @@
       "lastname": "Smith",
       "photo": "pp1.jpg",
       "id_number": 4,
-      "id": "D04-0004"
+      "id": "D04-004"
     }
   }
 }

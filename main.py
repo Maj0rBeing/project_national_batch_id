@@ -23,7 +23,7 @@ DISTRICT_MIN = 1
 DISTRICT_MAX = 15
 
 # Photo box (top-left corner where the photo will be pasted)
-PHOTO_SIZE = (240, 240)
+PHOTO_SIZE = (200, 200)
 CONTENT_CENTER_X = 400
 PHOTO_TOP_Y = 315
 PHOTO_POSITION = (CONTENT_CENTER_X - (PHOTO_SIZE[0] // 2), PHOTO_TOP_Y)
@@ -34,7 +34,7 @@ TEXT_START_Y = PHOTO_POSITION[1] + PHOTO_SIZE[1] + 16
 
 # Wrap area width for all text blocks
 WRAP_MAX_WIDTH = 260
-SECTION_GAP = 15
+SECTION_GAP = 20
 
 # Colors (hex supported by Pillow)
 COLOR_BLACK = "#ffffff"
@@ -132,7 +132,7 @@ def initialize_district_registries(registry_folder: str) -> None:
 
 
 def format_assigned_id(district_number: int, sequence_number: int) -> str:
-    return f"D{district_number:02d}-{sequence_number:04d}"
+    return f"D{district_number:02d}-{sequence_number:03d}"
 
 
 def district_output_folder(root_output_folder: str, district_number: int, batch_timestamp: str) -> str:
@@ -300,7 +300,7 @@ def get_or_create_district_id(
 
     if isinstance(existing, dict) and existing.get("id_number"):
         id_number = int(existing["id_number"])
-        existing.setdefault("id", format_assigned_id(district_number, id_number))
+        existing["id"] = format_assigned_id(district_number, id_number)
         existing["firstname"] = firstname
         existing["lastname"] = lastname
         existing["photo"] = photo_filename
