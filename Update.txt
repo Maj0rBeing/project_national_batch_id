@@ -1,2 +1,11 @@
-Update: lets update the program to automatically assign ID number based on given region [Range from Region 1 to Region 10 and GT] to the output photos, to begin lets create a local folder that generate a json file for each relative region
-, for every new photo and ID number is generated and stored in the JSON file 
+Update: lets update the program to automatically assign ID number based on given region [Range from District 1 to District 15 ], district info will be taken from id_data.csv -> distrct(column) to the output photos, to begin lets create a local folder that generate a json file for each relative distrct
+, for every new photo and ID number is generated and stored in the JSON file, every rendering of outputted photo will check the json file for existing name and id number if not create id appended from the last id number found relative its district in the json file
+
+
+Update: update the output folder to render outputs in a sub folder based on the districts [ range form 1 to 15] and ->  sub folder based on the timestamp batch 
+
+Update : generate a reset file that reset the output folder and json file
+
+Update : Create a report folder that holds all entries that is rendered by main.py by each districts 1 to 15 into a excel file, update reset file to the report files also
+
+Update: can we update the exported to rather than creating new files by timestamp, create a new one at first if not available and update the existing data on append using the batch_timestamp, assigned-id, firstname and lastname for unique entries to be added to report file as cross reference and can we add a color code for every different group of batch_timestamp value?

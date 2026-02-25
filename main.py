@@ -23,7 +23,7 @@ DISTRICT_MIN = 1
 DISTRICT_MAX = 15
 
 # Photo box (top-left corner where the photo will be pasted)
-PHOTO_SIZE = (280, 280)
+PHOTO_SIZE = (240, 240)
 CONTENT_CENTER_X = 400
 PHOTO_TOP_Y = 315
 PHOTO_POSITION = (CONTENT_CENTER_X - (PHOTO_SIZE[0] // 2), PHOTO_TOP_Y)
