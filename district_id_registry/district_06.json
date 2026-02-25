@@ -1,6 +1,105 @@
 {
   "district_number": 6,
   "district_label": "District 6",
-  "last_id_number": 0,
-  "records": {}
+  "last_id_number": 14,
+  "records": {
+    "eldon|moore": {
+      "firstname": "Eldon",
+      "lastname": "Moore",
+      "photo": "Eldon_Moore_20260225_135748.jpg",
+      "id_number": 1,
+      "id": "D06-001"
+    },
+    "paul|lyte": {
+      "firstname": "Paul",
+      "lastname": "Lyte",
+      "photo": "Paul_Lyte_20260225_135846.jpg",
+      "id_number": 2,
+      "id": "D06-002"
+    },
+    "kristy|flexis": {
+      "firstname": "Kristy",
+      "lastname": "Flexis",
+      "photo": "Kristy_Flexis_20260225_135929.jpg",
+      "id_number": 3,
+      "id": "D06-003"
+    },
+    "lavena|wong": {
+      "firstname": "LAVENA",
+      "lastname": "WONG",
+      "photo": "LAVENA_WONG_20260225_153811.jpg",
+      "id_number": 4,
+      "id": "D06-004"
+    },
+    "chandne|krisdatt": {
+      "firstname": "CHANDNE",
+      "lastname": "KRISDATT",
+      "photo": "CHANDNE_KRISDATT_20260225_153815.jpg",
+      "id_number": 5,
+      "id": "D06-005"
+    },
+    "akesha|sertima": {
+      "firstname": "AKESHA",
+      "lastname": "SERTIMA",
+      "photo": "AKESHA_SERTIMA_20260225_153821.jpg",
+      "id_number": 6,
+      "id": "D06-006"
+    },
+    "brad|mangal": {
+      "firstname": "BRAD",
+      "lastname": "MANGAL",
+      "photo": "BRAD_MANGAL_20260225_153825.jpg",
+      "id_number": 7,
+      "id": "D06-007"
+    },
+    "matteo|john": {
+      "firstname": "MATTEO",
+      "lastname": "JOHN",
+      "photo": "MATTEO_JOHN_20260225_153829.jpg",
+      "id_number": 8,
+      "id": "D06-008"
+    },
+    "neymar|tappin": {
+      "firstname": "NEYMAR",
+      "lastname": "TAPPIN",
+      "photo": "NEYMAR_TAPPIN_20260225_153833.jpg",
+      "id_number": 9,
+      "id": "D06-009"
+    },
+    "sefanie|king": {
+      "firstname": "SEFANIE",
+      "lastname": "KING",
+      "photo": "SEFANIE_KING_20260225_153838.jpg",
+      "id_number": 10,
+      "id": "D06-010"
+    },
+    "silvanja|france": {
+      "firstname": "SILVANJA",
+      "lastname": "FRANCE",
+      "photo": "SILVANJA_FRANCE_20260225_153842.jpg",
+      "id_number": 11,
+      "id": "D06-011"
+    },
+    "samuel|henry": {
+      "firstname": "SAMUEL",
+      "lastname": "HENRY",
+      "photo": "SAMUEL_HENRY_20260225_153846.jpg",
+      "id_number": 12,
+      "id": "D06-012"
+    },
+    "daniel|duke": {
+      "firstname": "DANIEL",
+      "lastname": "DUKE",
+      "photo": "DANIEL_DUKE_20260225_153851.jpg",
+      "id_number": 13,
+      "id": "D06-013"
+    },
+    "kellon|lyte": {
+      "firstname": "KELLON",
+      "lastname": "LYTE",
+      "photo": "KELLON_LYTE_20260225_153855.jpg",
+      "id_number": 14,
+      "id": "D06-014"
+    }
+  }
 }

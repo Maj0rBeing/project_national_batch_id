@@ -1,6 +1,70 @@
 {
   "district_number": 2,
   "district_label": "District 2",
-  "last_id_number": 0,
-  "records": {}
+  "last_id_number": 9,
+  "records": {
+    "risha|chester": {
+      "firstname": "Risha",
+      "lastname": "Chester",
+      "photo": "Risha_Chester_20260225_153914.jpg",
+      "id_number": 1,
+      "id": "D02-001"
+    },
+    "kiron|hansrajsingh": {
+      "firstname": "Kiron",
+      "lastname": "Hansrajsingh",
+      "photo": "Kiron_Hansrajsingh_20260225_153918.jpg",
+      "id_number": 2,
+      "id": "D02-002"
+    },
+    "azizi|christiani": {
+      "firstname": "Azizi",
+      "lastname": "Christiani",
+      "photo": "Azizi_Christiani_20260225_151356.jpg",
+      "id_number": 3,
+      "id": "D02-003"
+    },
+    "wanda|castello": {
+      "firstname": "Wanda",
+      "lastname": "Castello",
+      "photo": "Wanda_Castello_20260225_151642.jpg",
+      "id_number": 4,
+      "id": "D02-004"
+    },
+    "kesha|george": {
+      "firstname": "Kesha",
+      "lastname": "George",
+      "photo": "Kesha_George_20260225_153922.jpg",
+      "id_number": 5,
+      "id": "D02-005"
+    },
+    "luanna|edmonds": {
+      "firstname": "Luanna",
+      "lastname": "Edmonds",
+      "photo": "Luanna_Edmonds_20260225_152645.jpg",
+      "id_number": 6,
+      "id": "D02-006"
+    },
+    "shevannie|conyers": {
+      "firstname": "Shevannie",
+      "lastname": "Conyers",
+      "photo": "Shevannie_Conyers_20260225_153929.jpg",
+      "id_number": 7,
+      "id": "D02-007"
+    },
+    "akeem|sandy": {
+      "firstname": "Akeem",
+      "lastname": "Sandy",
+      "photo": "Akeem_Sandy_20260225_152553.jpg",
+      "id_number": 8,
+      "id": "D02-008"
+    },
+    "taren|thomas": {
+      "firstname": "Taren",
+      "lastname": "Thomas",
+      "photo": "Taren_Thomas_20260225_152743.jpg",
+      "id_number": 9,
+      "id": "D02-009"
+    }
+  }
 }

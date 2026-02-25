@@ -1,6 +1,105 @@
 {
   "district_number": 8,
   "district_label": "District 8",
-  "last_id_number": 0,
-  "records": {}
+  "last_id_number": 14,
+  "records": {
+    "jada|lamaizon": {
+      "firstname": "Jada",
+      "lastname": "Lamaizon",
+      "photo": "Jada_Lamaizon_20260225_102419.jpg",
+      "id_number": 1,
+      "id": "D08-001"
+    },
+    "nehimiah|lacruz": {
+      "firstname": "Nehimiah",
+      "lastname": "Lacruz",
+      "photo": "Nehimiah_Lacruz_20260225_102656.jpg",
+      "id_number": 2,
+      "id": "D08-002"
+    },
+    "akeila|wagner": {
+      "firstname": "Akeila",
+      "lastname": "Wagner",
+      "photo": "Akeila_Wagner_20260225_102903.jpg",
+      "id_number": 3,
+      "id": "D08-003"
+    },
+    "quenissa|vanhercel": {
+      "firstname": "Quenissa",
+      "lastname": "Vanhercel",
+      "photo": "Quenissa_Vanhercel_20260225_153858.jpg",
+      "id_number": 4,
+      "id": "D08-004"
+    },
+    "atisha|adams": {
+      "firstname": "Atisha",
+      "lastname": "Adams",
+      "photo": "Atisha_Adams_20260225_153902.jpg",
+      "id_number": 5,
+      "id": "D08-005"
+    },
+    "samwel|nelson": {
+      "firstname": "Samwel",
+      "lastname": "Nelson",
+      "photo": "Samwel_Nelson_20260225_153906.jpg",
+      "id_number": 6,
+      "id": "D08-006"
+    },
+    "omaryon|henry": {
+      "firstname": "Omaryon",
+      "lastname": "Henry",
+      "photo": "Omaryon_Henry_20260225_153910.jpg",
+      "id_number": 7,
+      "id": "D08-007"
+    },
+    "darvin|abraham": {
+      "firstname": "Darvin",
+      "lastname": "Abraham",
+      "photo": "Darvin_Abraham_20260225_153252.jpg",
+      "id_number": 8,
+      "id": "D08-008"
+    },
+    "aaron|james": {
+      "firstname": "Aaron",
+      "lastname": "James",
+      "photo": "Aaron_James_20260225_153400.jpg",
+      "id_number": 9,
+      "id": "D08-009"
+    },
+    "elson|james": {
+      "firstname": "Elson",
+      "lastname": "James",
+      "photo": "Elson_James_20260225_153509.jpg",
+      "id_number": 10,
+      "id": "D08-010"
+    },
+    "trevor|baldenvick": {
+      "firstname": "Trevor",
+      "lastname": "Baldenvick",
+      "photo": "Trevor_Baldenvick_20260225_153609.jpg",
+      "id_number": 11,
+      "id": "D08-011"
+    },
+    "carlon|fredericks": {
+      "firstname": "Carlon",
+      "lastname": "Fredericks",
+      "photo": "Carlon_Fredericks_20260225_153914.jpg",
+      "id_number": 12,
+      "id": "D08-012"
+    },
+    "hubert|samuel": {
+      "firstname": "Hubert",
+      "lastname": "Samuel",
+      "photo": "Hubert_Samuel_20260225_154006.jpg",
+      "id_number": 13,
+      "id": "D08-013"
+    },
+    "rooney|eduan": {
+      "firstname": "Rooney",
+      "lastname": "Eduan",
+      "photo": "Rooney_Eduan_20260225_154159.jpg",
+      "id_number": 14,
+      "id": "D08-014"
+    }
+  }
 }

@@ -341,6 +341,10 @@ def get_csv_value(row: Dict[str, str], *keys: str) -> str:
     return ""
 
 
+def is_athlete_role(role: str) -> bool:
+    return normalize_spaces(role).lower() == "athlete"
+
+
 def load_font(font_path: Optional[str], size: int) -> ImageFont.FreeTypeFont:
     # Use custom font if supplied and exists, otherwise try Arial, otherwise default
     if font_path and os.path.exists(font_path):
@@ -562,13 +566,15 @@ def batch_generate_id_cards(csv_file: str):
                     print(f"[WARN] Row {i}: {e} - skipping")
                     continue
 
-                assigned_id = get_or_create_district_id(
-                    registry_folder=DISTRICT_REGISTRY_FOLDER,
-                    district_number=district_number,
-                    firstname=firstname,
-                    lastname=lastname,
-                    photo_filename=photo,
-                )
+                assigned_id = ""
+                if is_athlete_role(role):
+                    assigned_id = get_or_create_district_id(
+                        registry_folder=DISTRICT_REGISTRY_FOLDER,
+                        district_number=district_number,
+                        firstname=firstname,
+                        lastname=lastname,
+                        photo_filename=photo,
+                    )
 
                 output_path = create_id_card(
                     firstname=firstname,

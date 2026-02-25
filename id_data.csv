@@ -1,5 +1,57 @@
-﻿Timestamp,firstname,lastname,Role,School,District,Photo
-2/24/2026 15:35:54,John,Smith ,Athlete,Queens College,District-4,John_Smith_20260224_153558.jpg
-2/24/2026 16:05:45,Karishma ,Ramnauth,Official,North West Secondary ,District-1,Karishma_Ramnauth_20260224_160550.jpg
-2/24/2026 16:23:06,Nicholad,Fraser,Official,Qc,District-11,Nicholad_Fraser_20260224_162313.jpg
-2/24/2026 16:23:06,Blue,Smith,Official,Qc,District-4,pp1.jpg
+Timestamp,firstname,lastname,Role,School,District,Photo,processed,photo_status
+2/25/2026 9:55:53,John ,Smith,Official,Bishops High ,District-4,John_Smith_20260225_095555.jpg,,SKIP
+2/25/2026 10:00:41,Oshelle ,Bartrum ,Official,Department of Education ,District-1,Oshelle_Bartrum_20260225_100046.jpg,,SKIP
+2/25/2026 10:24:13,Jada,Lamaizon,Athlete,School-Of-Excellence ,District-8,Jada_Lamaizon_20260225_102419.jpg,,SKIP
+2/25/2026 10:26:50,Nehimiah,Lacruz,Athlete,School-Of-Excellence ,District-8,Nehimiah_Lacruz_20260225_102656.jpg,,SKIP
+2/25/2026 10:28:37,Akeila,Wagner,Athlete,School-Of-Excellence ,District-8,Akeila_Wagner_20260225_102903.jpg,,SKIP
+2/25/2026 11:28:05,Artezz ,Gikes,Athlete,Port Kaituma Secondary ,District-1,Artezz_Gikes_20260225_112812.jpg,,SKIP
+2/25/2026 11:30:15,Ronson,Eudoxie,Athlete,Port Kaituma Secondary ,District-1,Ronson_Eudoxie_20260225_113023.jpg,,SKIP
+2/25/2026 11:32:05,Matthew ,Doliveria ,Athlete,Port Kaituma Secondary ,District-1,Matthew_Doliveria_20260225_113209.jpg,,SKIP
+2/25/2026 11:34:42,Amesha,Daniels ,Athlete,Port Kaituma Secondary ,District-1,Amesha_Daniels_20260225_113449.jpg,,SKIP
+2/25/2026 11:35:50,Akesha ,Allen ,Athlete,Port Kaituma Secondary ,District-1,Akesha_Allen_20260225_113553.jpg,,SKIP
+2/25/2026 11:37:00,Miya ,Fraser,Athlete,Port Kaituma Secondary ,District-1,Miya_Fraser_20260225_113702.jpg,,SKIP
+2/25/2026 12:41:52,Amar ,Hutson,Athlete,Port Kaituma Secondary ,District-1,Amar_Hutson_20260225_124154.jpg,,SKIP
+2/25/2026 12:44:01,Ryan ,Smythe,Athlete,Port Kaituma Secondary ,District-1,Ryan_Smythe_20260225_124402.jpg,,SKIP
+2/25/2026 12:46:44,Zanavier,Benjamin ,Athlete,Port Kaituma Secondary ,District-1,Zanavier_Benjamin_20260225_124646.jpg,,SKIP
+2/25/2026 12:48:43,Colwin,Greene,Athlete,Port Kaituma Secondary ,District-1,Colwin_Greene_20260225_124845.jpg,,SKIP
+2/25/2026 12:50:25,Stephania ,Lara,Athlete,Matthew's Ridge Secondary ,District-1,Stephania_Lara_20260225_125028.jpg,,SKIP
+2/25/2026 12:51:11,Colwin ,Greene,Athlete,Matthew's Ridge Secondary ,District-1,Colwin_Greene_20260225_125114.jpg,,SKIP
+2/25/2026 12:56:41,Greg,Reevers,Official,Port Kaituma Secondary ,District-1,Greg_Reevers_20260225_125642.jpg,,SKIP
+2/25/2026 13:01:06,Avanil ,Jeffrey,Official,Port Kaituma Secondary ,District-1,Avanil_Jeffrey_20260225_131246.jpg,,SKIP
+2/25/2026 13:23:11,Dwayne,John,Athlete,Port Kaituma Secondary ,District-1,Dwayne_John_20260225_153806.jpg,YES,OK
+2/25/2026 13:57:47,Eldon,Moore,Athlete,Central Corentyne Secondary ,District-6,Eldon_Moore_20260225_135748.jpg,,SKIP
+2/25/2026 13:58:45,Paul ,Lyte,Athlete,Central Corentyne Secondary ,District-6,Paul_Lyte_20260225_135846.jpg,,SKIP
+2/25/2026 13:59:26,Kristy,Flexis,Athlete,Central Corentyne Secondary ,District-6,Kristy_Flexis_20260225_135929.jpg,,SKIP
+2/25/2026 14:14:34,LAVENA,WONG,Athlete,SKELDON LINEPATH SECONDARY SCHOOL,District-6,LAVENA_WONG_20260225_153811.jpg,YES,OK
+2/25/2026 14:16:04,CHANDNE,KRISDATT,Athlete,SKELDON LINEPATH SCEONDARY,District-6,CHANDNE_KRISDATT_20260225_153815.jpg,YES,OK
+2/25/2026 14:17:21,AKESHA,SERTIMA,Athlete,SKELDON LINEPATH SECONDARY,District-6,AKESHA_SERTIMA_20260225_153821.jpg,YES,OK
+2/25/2026 14:18:36,BRAD,MANGAL,Athlete,SKELDON LINEPATH SECONDARY,District-6,BRAD_MANGAL_20260225_153825.jpg,YES,OK
+2/25/2026 14:19:50,MATTEO,JOHN,Athlete,SKELDON LINEPATH SECONDARY,District-6,MATTEO_JOHN_20260225_153829.jpg,YES,OK
+2/25/2026 14:21:15,NEYMAR,TAPPIN,Athlete,SKELDON LINEPATH SECONDARY,District-6,NEYMAR_TAPPIN_20260225_153833.jpg,YES,OK
+2/25/2026 14:22:50,SEFANIE ,KING,Athlete,SKELDON LINEPATH SECONDAY,District-6,SEFANIE_KING_20260225_153838.jpg,YES,OK
+2/25/2026 14:24:46,SILVANJA,FRANCE,Athlete,SKELDON LINEPATH SCONDARY,District-6,SILVANJA_FRANCE_20260225_153842.jpg,YES,OK
+2/25/2026 14:25:40,SAMUEL,HENRY,Athlete,SKELDON LINEPATH SEONDARY,District-6,SAMUEL_HENRY_20260225_153846.jpg,YES,OK
+2/25/2026 14:26:46,DANIEL,DUKE,Athlete,SKELDON LINEPATH SECONDARY,District-6,DANIEL_DUKE_20260225_153851.jpg,YES,OK
+2/25/2026 14:28:08,KELLON,LYTE,Athlete,SKELDON LINEPATH SECONDARY ,District-6,KELLON_LYTE_20260225_153855.jpg,YES,OK
+2/25/2026 14:35:59,Quenissa,Vanhercel,Athlete,Mahdia Secondary School,District-8,Quenissa_Vanhercel_20260225_153858.jpg,YES,OK
+2/25/2026 14:38:17,Atisha,Adams,Athlete,Mahdia Secondary School,District-8,Atisha_Adams_20260225_153902.jpg,YES,OK
+2/25/2026 14:40:14,Samwel ,Nelson,Athlete,Mahdia Secondary school,District-8,Samwel_Nelson_20260225_153906.jpg,YES,OK
+2/25/2026 14:52:10,Omaryon ,Henry,Athlete,Mahdia Secondary School,District-8,Omaryon_Henry_20260225_153910.jpg,YES,OK
+2/25/2026 15:03:07,Risha,Chester,Official,8th May Secondary ,District-2,Risha_Chester_20260225_153914.jpg,YES,OK
+2/25/2026 15:07:48,Kiron ,Hansrajsingh ,Official,Charity Secondary ,District-2,Kiron_Hansrajsingh_20260225_153918.jpg,YES,OK
+2/25/2026 15:13:51,Azizi,Christiani,Official,Abram Zuil Secondary,District-2,Azizi_Christiani_20260225_151356.jpg,,SKIP
+2/25/2026 15:16:39,Wanda,Castello,Official,Charity Secondary ,District-2,Wanda_Castello_20260225_151642.jpg,,SKIP
+2/25/2026 15:18:05,Kesha,George,Official,Anna Regina Secondary ,District-2,Kesha_George_20260225_153922.jpg,YES,OK
+2/25/2026 15:18:29,Luanna,Edmonds ,Athlete,Wakapoa secondary ,District-2,Luanna_Edmonds_20260225_153926.jpg,YES,OK
+2/25/2026 15:19:34,Shevannie ,Conyers,Official,Wakapoa Secondary School ,District-2,Shevannie_Conyers_20260225_153929.jpg,YES,OK
+2/25/2026 15:21:33,Akeem,Sandy,Athlete,Wakapoa Secondary school,District-2,Akeem_Sandy_20260225_153933.jpg,YES,OK
+2/25/2026 15:24:46,Akeem ,Sandy,Athlete,Wakapoa Secondary School,District-2,Akeem_Sandy_20260225_152553.jpg,,SKIP
+2/25/2026 15:26:43,Luanna,Edmonds,Athlete,Wakapoa Secondary School ,District-2,Luanna_Edmonds_20260225_152645.jpg,,SKIP
+2/25/2026 15:27:41,Taren,Thomas,Athlete,Wakapoa Secondary School ,District-2,Taren_Thomas_20260225_152743.jpg,,SKIP
+2/25/2026 15:32:46,Darvin,Abraham ,Athlete,Kato Secondary School ,District-8,Darvin_Abraham_20260225_153252.jpg,,SKIP
+2/25/2026 15:33:57,Aaron,James,Athlete,Kato Secondary ,District-8,Aaron_James_20260225_153400.jpg,,SKIP
+2/25/2026 15:35:07,Elson,James,Athlete,Kato Secondary ,District-8,Elson_James_20260225_153509.jpg,,SKIP
+2/25/2026 15:36:06,Trevor ,Baldenvick,Athlete,Kato Secondary ,District-8,Trevor_Baldenvick_20260225_153609.jpg,,SKIP
+2/25/2026 15:39:12,Carlon,Fredericks,Athlete,Kato Secondary ,District-8,Carlon_Fredericks_20260225_153914.jpg,YES,
+2/25/2026 15:40:03,Hubert,Samuel ,Athlete,Kato Secondary ,District-8,Hubert_Samuel_20260225_154006.jpg,YES,
+2/25/2026 15:41:57,Rooney ,Eduan,Athlete,Kato Secondary ,District-8,Rooney_Eduan_20260225_154159.jpg,YES,
