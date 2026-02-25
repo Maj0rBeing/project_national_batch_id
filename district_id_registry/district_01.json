@@ -1,6 +1,28 @@
 {
   "district_number": 1,
   "district_label": "District 1",
-  "last_id_number": 0,
-  "records": {}
+  "last_id_number": 3,
+  "records": {
+    "karishma|ramnauth": {
+      "firstname": "Karishma",
+      "lastname": "Ramnauth",
+      "photo": "Karishma_Ramnauth_20260224_160550.jpg",
+      "id_number": 1,
+      "id": "D01-0001"
+    },
+    "sally smith|athletes": {
+      "firstname": "Sally Smith",
+      "lastname": "Athletes",
+      "photo": "",
+      "id_number": 2,
+      "id": "D01-0002"
+    },
+    "sally|smith": {
+      "firstname": "SallY",
+      "lastname": "Smith",
+      "photo": "PP1.jpg",
+      "id_number": 3,
+      "id": "D01-0003"
+    }
+  }
 }

@@ -1,6 +1,14 @@
 {
   "district_number": 2,
   "district_label": "District 2",
-  "last_id_number": 0,
-  "records": {}
+  "last_id_number": 1,
+  "records": {
+    "max smith|athletes": {
+      "firstname": "Max Smith",
+      "lastname": "Athletes",
+      "photo": "",
+      "id_number": 1,
+      "id": "D02-0001"
+    }
+  }
 }

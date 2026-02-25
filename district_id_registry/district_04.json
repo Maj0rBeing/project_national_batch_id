@@ -1,7 +1,7 @@
 {
   "district_number": 4,
   "district_label": "District 4",
-  "last_id_number": 2,
+  "last_id_number": 3,
   "records": {
     "john|smith": {
       "firstname": "John",
@@ -16,6 +16,13 @@
       "photo": "pp1.jpg",
       "id_number": 2,
       "id": "D04-0002"
+    },
+    "max|smith": {
+      "firstname": "Max",
+      "lastname": "Smith",
+      "photo": "PP2.jpg",
+      "id_number": 3,
+      "id": "D04-0003"
     }
   }
 }

@@ -147,6 +147,13 @@ def district_report_folder(root_report_folder: str, district_number: int) -> str
     return os.path.join(root_report_folder, f"district_{district_number:02d}")
 
 
+def district_report_file_path(root_report_folder: str, district_number: int) -> str:
+    return os.path.join(
+        district_report_folder(root_report_folder, district_number),
+        f"district_{district_number:02d}_report.xlsx",
+    )
+
+
 def create_batch_report_buckets() -> Dict[int, List[Dict[str, str]]]:
     return {district_number: [] for district_number in range(DISTRICT_MIN, DISTRICT_MAX + 1)}
 
@@ -157,7 +164,8 @@ def write_excel_reports(
     rows_by_district: Dict[int, List[Dict[str, str]]],
 ) -> None:
     try:
-        from openpyxl import Workbook
+        from openpyxl import Workbook, load_workbook
+        from openpyxl.styles import PatternFill
     except ModuleNotFoundError as e:
         raise ModuleNotFoundError(
             "Missing dependency 'openpyxl'. Install it (for example: pip install -r requirements.txt) "
@@ -176,6 +184,18 @@ def write_excel_reports(
         "photo",
         "output_file",
     ]
+    # Requested uniqueness key for report rows (across batches).
+    unique_key_headers = ["assigned_id", "firstname", "lastname"]
+    batch_fill_palette = [
+        "FFF2CC",  # light yellow
+        "DDEBF7",  # light blue
+        "E2F0D9",  # light green
+        "FCE4D6",  # light orange
+        "EAD1DC",  # light pink
+        "D9EAD3",  # pale green
+        "D0E0E3",  # pale cyan
+        "F4CCCC",  # pale red
+    ]
 
     for district_number in range(DISTRICT_MIN, DISTRICT_MAX + 1):
         district_rows = rows_by_district.get(district_number, [])
@@ -184,15 +204,84 @@ def write_excel_reports(
 
         district_folder = district_report_folder(root_report_folder, district_number)
         os.makedirs(district_folder, exist_ok=True)
-        workbook = Workbook()
-        sheet = workbook.active
-        sheet.title = f"District {district_number}"
-        sheet.append(headers)
+        report_path = district_report_file_path(root_report_folder, district_number)
+
+        if os.path.exists(report_path):
+            workbook = load_workbook(report_path)
+            sheet = workbook.active
+        else:
+            workbook = Workbook()
+            sheet = workbook.active
+            sheet.title = f"District {district_number}"
+
+        # Ensure header row exists and matches expected columns.
+        existing_headers = [sheet.cell(row=1, column=i + 1).value for i in range(len(headers))]
+        if existing_headers != headers:
+            for i, header in enumerate(headers, start=1):
+                sheet.cell(row=1, column=i, value=header)
+
+        header_to_col = {header: index + 1 for index, header in enumerate(headers)}
+
+        def norm(value: Any) -> str:
+            return str(value or "").strip().lower()
+
+        existing_index: Dict[tuple, int] = {}
+        existing_by_assigned_id: Dict[str, int] = {}
+        for row_idx in range(2, sheet.max_row + 1):
+            key = tuple(
+                norm(sheet.cell(row=row_idx, column=header_to_col[h]).value)
+                for h in unique_key_headers
+            )
+            if any(key):
+                existing_index[key] = row_idx
+            assigned_id_key = norm(sheet.cell(row=row_idx, column=header_to_col["assigned_id"]).value)
+            if assigned_id_key:
+                existing_by_assigned_id[assigned_id_key] = row_idx
 
         for row in district_rows:
-            sheet.append([row.get(header, "") for header in headers])
+            row_key = tuple(norm(row.get(h, "")) for h in unique_key_headers)
+            target_row_idx = existing_index.get(row_key)
 
-        report_path = os.path.join(district_folder, f"batch_{batch_timestamp}.xlsx")
+            if target_row_idx is None:
+                # Better fallback: assigned_id is already district-unique and persistent.
+                # If names were corrected/renamed, update the existing assigned_id row instead of duplicating it.
+                assigned_id_only = norm(row.get("assigned_id", ""))
+                target_row_idx = existing_by_assigned_id.get(assigned_id_only)
+
+            if target_row_idx is None:
+                target_row_idx = sheet.max_row + 1
+
+            existing_index[row_key] = target_row_idx
+            assigned_id_only = norm(row.get("assigned_id", ""))
+            if assigned_id_only:
+                existing_by_assigned_id[assigned_id_only] = target_row_idx
+
+            for header in headers:
+                sheet.cell(row=target_row_idx, column=header_to_col[header], value=row.get(header, ""))
+
+        # Color rows by batch_timestamp group across the full district report for quick cross-reference.
+        timestamp_col = header_to_col["batch_timestamp"]
+        batch_fill_map: Dict[str, Any] = {}
+        next_fill_index = 0
+        no_fill = PatternFill(fill_type=None)
+        for row_idx in range(2, sheet.max_row + 1):
+            batch_value = str(sheet.cell(row=row_idx, column=timestamp_col).value or "").strip()
+            if not batch_value:
+                fill = no_fill
+            else:
+                if batch_value not in batch_fill_map:
+                    color = batch_fill_palette[next_fill_index % len(batch_fill_palette)]
+                    batch_fill_map[batch_value] = PatternFill(
+                        fill_type="solid",
+                        start_color=color,
+                        end_color=color,
+                    )
+                    next_fill_index += 1
+                fill = batch_fill_map[batch_value]
+
+            for col_idx in range(1, len(headers) + 1):
+                sheet.cell(row=row_idx, column=col_idx).fill = fill
+
         workbook.save(report_path)
         print(f"Report: {report_path}")
 
