@@ -477,9 +477,10 @@ def create_id_card(
         y += text_height(draw, ln, font_name) + 2
     y += SECTION_GAP
 
-    id_line = f"ID: {assigned_id}"
-    draw_centered_text(draw, CONTENT_CENTER_X, y, id_line, font_id, COLOR_BLACK)
-    y += text_height(draw, id_line, font_id) + SECTION_GAP
+    if is_athlete_role(role):
+        id_line = f"ID: {assigned_id}"
+        draw_centered_text(draw, CONTENT_CENTER_X, y, id_line, font_id, COLOR_BLACK)
+        y += text_height(draw, id_line, font_id) + SECTION_GAP
 
     role_line = str(role).upper()
     draw_centered_text(draw, CONTENT_CENTER_X, y, role_line, font_role, COLOR_RED)
