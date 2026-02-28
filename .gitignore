@@ -2,3 +2,10 @@
 *.pyc
 output/
 *.xlsx
+*.jpg
+*.heic
+*.png
+/photos
+*.0ff
+*.off
+*.0ff
