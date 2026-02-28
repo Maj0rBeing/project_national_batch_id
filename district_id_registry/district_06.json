@@ -1,7 +1,7 @@
 {
   "district_number": 6,
   "district_label": "District 6",
-  "last_id_number": 14,
+  "last_id_number": 27,
   "records": {
     "eldon|moore": {
       "firstname": "Eldon",
@@ -100,6 +100,97 @@
       "photo": "KELLON_LYTE_20260225_153855.jpg",
       "id_number": 14,
       "id": "D06-014"
+    },
+    "lexroy|lovell": {
+      "firstname": "Lexroy",
+      "lastname": "Lovell",
+      "photo": "Lexroy_Lovell_20260226_135438.jpg",
+      "id_number": 15,
+      "id": "D06-015"
+    },
+    "tiana|gray": {
+      "firstname": "Tiana",
+      "lastname": "Gray",
+      "photo": "Tiana_Gray_20260226_135540.jpg",
+      "id_number": 16,
+      "id": "D06-016"
+    },
+    "princess|butcher": {
+      "firstname": "Princess",
+      "lastname": "Butcher",
+      "photo": "Princess_Butcher_20260226_135630.jpg",
+      "id_number": 17,
+      "id": "D06-017"
+    },
+    "jarel|campbell": {
+      "firstname": "Jarel",
+      "lastname": "Campbell",
+      "photo": "Jarel_Campbell_20260226_135724.jpg",
+      "id_number": 18,
+      "id": "D06-018"
+    },
+    "kianna|bennett": {
+      "firstname": "Kianna",
+      "lastname": "Bennett",
+      "photo": "Kianna_Bennett_20260226_135919.jpg",
+      "id_number": 19,
+      "id": "D06-019"
+    },
+    "jonathan|ashram": {
+      "firstname": "Jonathan",
+      "lastname": "Ashram",
+      "photo": "Jonathan_Ashram_20260226_140251.jpg",
+      "id_number": 20,
+      "id": "D06-020"
+    },
+    "presca|glasgow": {
+      "firstname": "Presca",
+      "lastname": "Glasgow",
+      "photo": "Presca_Glasgow_20260226_140408.jpg",
+      "id_number": 21,
+      "id": "D06-021"
+    },
+    "vanisha|leitch": {
+      "firstname": "Vanisha",
+      "lastname": "Leitch",
+      "photo": "Vanisha_Leitch_20260226_140540.jpg",
+      "id_number": 22,
+      "id": "D06-022"
+    },
+    "takesha|giddings": {
+      "firstname": "Takesha",
+      "lastname": "Giddings",
+      "photo": "Takesha_Giddings_20260226_140654.jpg",
+      "id_number": 23,
+      "id": "D06-023"
+    },
+    "osapho|charles": {
+      "firstname": "Osapho",
+      "lastname": "Charles",
+      "photo": "Osapho_Charles_20260227_085238.jpg",
+      "id_number": 24,
+      "id": "D06-024"
+    },
+    "jerwin|harvey": {
+      "firstname": "Jerwin",
+      "lastname": "Harvey",
+      "photo": "Jerwin_Harvey_20260227_085442.jpg",
+      "id_number": 25,
+      "id": "D06-025"
+    },
+    "timothy|murry": {
+      "firstname": "Timothy",
+      "lastname": "Murry",
+      "photo": "Timothy_Murry_20260227_090331.jpg",
+      "id_number": 26,
+      "id": "D06-026"
+    },
+    "timothy|morris": {
+      "firstname": "Timothy",
+      "lastname": "Morris",
+      "photo": "Timothy_Morris_20260227_091028.jpg",
+      "id_number": 27,
+      "id": "D06-027"
     }
   }
 }

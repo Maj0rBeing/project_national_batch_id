@@ -1,6 +1,161 @@
 {
   "district_number": 12,
   "district_label": "District 12",
-  "last_id_number": 0,
-  "records": {}
+  "last_id_number": 22,
+  "records": {
+    "maciel|forde": {
+      "firstname": "Maciel",
+      "lastname": "Forde",
+      "photo": "Maciel_Forde_20260227_094205.jpg",
+      "id_number": 1,
+      "id": "D12-001"
+    },
+    "kyrique|harcourt": {
+      "firstname": "Kyrique",
+      "lastname": "Harcourt",
+      "photo": "Kyrique_Harcourt_20260227_094400.jpg",
+      "id_number": 2,
+      "id": "D12-002"
+    },
+    "joel|stephen": {
+      "firstname": "Joel",
+      "lastname": "Stephen",
+      "photo": "Joel_Stephen_20260227_094455.jpg",
+      "id_number": 3,
+      "id": "D12-003"
+    },
+    "nyomi|berry": {
+      "firstname": "Nyomi",
+      "lastname": "Berry",
+      "photo": "Nyomi_Berry_20260227_094506.jpg",
+      "id_number": 4,
+      "id": "D12-004"
+    },
+    "tamacia|king": {
+      "firstname": "Tamacia",
+      "lastname": "King",
+      "photo": "Tamacia_King_20260227_094647.jpg",
+      "id_number": 5,
+      "id": "D12-005"
+    },
+    "ajanj|cuttings": {
+      "firstname": "Ajanj",
+      "lastname": "Cuttings",
+      "photo": "Ajanj_Cuttings_20260227_095123.jpg",
+      "id_number": 6,
+      "id": "D12-006"
+    },
+    "keanna|archer": {
+      "firstname": "Keanna",
+      "lastname": "Archer",
+      "photo": "Keanna_Archer_20260227_095228.jpg",
+      "id_number": 7,
+      "id": "D12-007"
+    },
+    "jadah|barnwell": {
+      "firstname": "Jadah",
+      "lastname": "Barnwell",
+      "photo": "Jadah_Barnwell_20260227_095339.jpg",
+      "id_number": 8,
+      "id": "D12-008"
+    },
+    "michah|castello": {
+      "firstname": "Michah",
+      "lastname": "Castello",
+      "photo": "Michah_Castello_20260227_095544.jpg",
+      "id_number": 9,
+      "id": "D12-009"
+    },
+    "mellody|pollydore": {
+      "firstname": "Mellody",
+      "lastname": "Pollydore",
+      "photo": "Mellody_Pollydore_20260227_095752.jpg",
+      "id_number": 10,
+      "id": "D12-010"
+    },
+    "melody|daniel\u2019s": {
+      "firstname": "Melody",
+      "lastname": "Daniel\u2019s",
+      "photo": "Melody_Daniel\u2019s_20260227_095852.jpg",
+      "id_number": 11,
+      "id": "D12-011"
+    },
+    "donnell|morris": {
+      "firstname": "Donnell",
+      "lastname": "Morris",
+      "photo": "Donnell_Morris_20260227_100042.jpg",
+      "id_number": 12,
+      "id": "D12-012"
+    },
+    "davian|hutson": {
+      "firstname": "Davian",
+      "lastname": "Hutson",
+      "photo": "Davian_Hutson_20260227_100113.jpg",
+      "id_number": 13,
+      "id": "D12-013"
+    },
+    "ivor|duncan": {
+      "firstname": "Ivor",
+      "lastname": "Duncan",
+      "photo": "Ivor_Duncan_20260227_100125.jpg",
+      "id_number": 14,
+      "id": "D12-014"
+    },
+    "makesha|billey": {
+      "firstname": "Makesha",
+      "lastname": "Billey",
+      "photo": "Makesha_Billey_20260227_100158.jpg",
+      "id_number": 15,
+      "id": "D12-015"
+    },
+    "travis|savory": {
+      "firstname": "Travis",
+      "lastname": "Savory",
+      "photo": "Travis_Savory_20260227_100218.jpg",
+      "id_number": 16,
+      "id": "D12-016"
+    },
+    "dena|pablo": {
+      "firstname": "Dena",
+      "lastname": "Pablo",
+      "photo": "Dena_Pablo_20260227_100507.jpg",
+      "id_number": 17,
+      "id": "D12-017"
+    },
+    "shafiah|snaggs": {
+      "firstname": "Shafiah",
+      "lastname": "Snaggs",
+      "photo": "Shafiah_Snaggs_20260227_100533.jpg",
+      "id_number": 18,
+      "id": "D12-018"
+    },
+    "azriel|baxter- dennis": {
+      "firstname": "Azriel",
+      "lastname": "Baxter- Dennis",
+      "photo": "Azriel_Baxter-_Dennis_20260227_100648.jpg",
+      "id_number": 19,
+      "id": "D12-019"
+    },
+    "aisha|squires": {
+      "firstname": "Aisha",
+      "lastname": "Squires",
+      "photo": "Aisha_Squires_20260227_100856.jpg",
+      "id_number": 20,
+      "id": "D12-020"
+    },
+    "serennitti|chester": {
+      "firstname": "Serennitti",
+      "lastname": "Chester",
+      "photo": "Serennitti_Chester_20260227_101010.jpg",
+      "id_number": 21,
+      "id": "D12-021"
+    },
+    "uldean|powdar": {
+      "firstname": "Uldean",
+      "lastname": "Powdar",
+      "photo": "Uldean_Powdar_20260227_101154.jpg",
+      "id_number": 22,
+      "id": "D12-022"
+    }
+  }
 }

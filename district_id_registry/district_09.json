@@ -1,6 +1,168 @@
 {
   "district_number": 9,
   "district_label": "District 9",
-  "last_id_number": 0,
-  "records": {}
+  "last_id_number": 23,
+  "records": {
+    "nevin|sears": {
+      "firstname": "Nevin",
+      "lastname": "Sears",
+      "photo": "Nevin_Sears_20260226_090909.jpg",
+      "id_number": 1,
+      "id": "D09-001"
+    },
+    "ina|mansonhing": {
+      "firstname": "Ina",
+      "lastname": "Mansonhing",
+      "photo": "Ina_Mansonhing_20260226_091226.jpg",
+      "id_number": 2,
+      "id": "D09-002"
+    },
+    "thyeanne|joe": {
+      "firstname": "Thyeanne",
+      "lastname": "Joe",
+      "photo": "Thyeanne_Joe_20260226_091338.jpg",
+      "id_number": 3,
+      "id": "D09-003"
+    },
+    "daniella|carlos": {
+      "firstname": "Daniella",
+      "lastname": "Carlos",
+      "photo": "Daniella_Carlos_20260226_091458.jpg",
+      "id_number": 4,
+      "id": "D09-004"
+    },
+    "clirona|phillip": {
+      "firstname": "Clirona",
+      "lastname": "Phillip",
+      "photo": "Clirona_Phillip_20260226_092618.jpg",
+      "id_number": 5,
+      "id": "D09-005"
+    },
+    "meckelly|alvin": {
+      "firstname": "Meckelly",
+      "lastname": "Alvin",
+      "photo": "Meckelly_Alvin_20260226_092707.jpg",
+      "id_number": 6,
+      "id": "D09-006"
+    },
+    "kareena|francis": {
+      "firstname": "Kareena",
+      "lastname": "Francis",
+      "photo": "Kareena_Francis_20260226_092815.jpg",
+      "id_number": 7,
+      "id": "D09-007"
+    },
+    "glendon|gomes": {
+      "firstname": "Glendon",
+      "lastname": "Gomes",
+      "photo": "Glendon_Gomes_20260226_123205.jpg",
+      "id_number": 8,
+      "id": "D09-008"
+    },
+    "stanio|jacobs": {
+      "firstname": "Stanio",
+      "lastname": "Jacobs",
+      "photo": "Stanio_Jacobs_20260226_123307.jpg",
+      "id_number": 9,
+      "id": "D09-009"
+    },
+    "sanjay|thomas": {
+      "firstname": "Sanjay",
+      "lastname": "Thomas",
+      "photo": "Sanjay_Thomas_20260226_123407.jpg",
+      "id_number": 10,
+      "id": "D09-010"
+    },
+    "ryan|pedro": {
+      "firstname": "Ryan",
+      "lastname": "Pedro",
+      "photo": "Ryan_Pedro_20260226_123515.jpg",
+      "id_number": 11,
+      "id": "D09-011"
+    },
+    "javan|carlos": {
+      "firstname": "Javan",
+      "lastname": "Carlos",
+      "photo": "Javan_Carlos_20260226_123607.jpg",
+      "id_number": 12,
+      "id": "D09-012"
+    },
+    "marisa|dorrick": {
+      "firstname": "Marisa",
+      "lastname": "Dorrick",
+      "photo": "Marisa_Dorrick_20260226_123702.jpg",
+      "id_number": 13,
+      "id": "D09-013"
+    },
+    "nicaias|jacobs": {
+      "firstname": "Nicaias",
+      "lastname": "Jacobs",
+      "photo": "Nicaias_Jacobs_20260226_123810.jpg",
+      "id_number": 14,
+      "id": "D09-014"
+    },
+    "sean|johnny": {
+      "firstname": "Sean",
+      "lastname": "Johnny",
+      "photo": "Sean_Johnny_20260226_123900.jpg",
+      "id_number": 15,
+      "id": "D09-015"
+    },
+    "aline|marcello": {
+      "firstname": "Aline",
+      "lastname": "Marcello",
+      "photo": "Aline_Marcello_20260226_124002.jpg",
+      "id_number": 16,
+      "id": "D09-016"
+    },
+    "treve|davis": {
+      "firstname": "Treve",
+      "lastname": "Davis",
+      "photo": "Treve_Davis_20260226_124106.jpg",
+      "id_number": 17,
+      "id": "D09-017"
+    },
+    "jose|cyprian": {
+      "firstname": "Jose",
+      "lastname": "Cyprian",
+      "photo": "Jose_Cyprian_20260226_124204.jpg",
+      "id_number": 18,
+      "id": "D09-018"
+    },
+    "brielle|jacobus": {
+      "firstname": "Brielle",
+      "lastname": "Jacobus",
+      "photo": "Brielle_Jacobus_20260227_110016.jpg",
+      "id_number": 19,
+      "id": "D09-019"
+    },
+    "triscia|stephna": {
+      "firstname": "Triscia",
+      "lastname": "Stephna",
+      "photo": "Triscia_Stephna_20260227_110115.jpg",
+      "id_number": 20,
+      "id": "D09-020"
+    },
+    "abigail|jonas": {
+      "firstname": "Abigail",
+      "lastname": "Jonas",
+      "photo": "Abigail_Jonas_20260227_110208.jpg",
+      "id_number": 21,
+      "id": "D09-021"
+    },
+    "menyelek|tacoordeen": {
+      "firstname": "Menyelek",
+      "lastname": "Tacoordeen",
+      "photo": "Menyelek_Tacoordeen_20260227_110303.jpg",
+      "id_number": 22,
+      "id": "D09-022"
+    },
+    "eliana|mello": {
+      "firstname": "Eliana",
+      "lastname": "Mello",
+      "photo": "Eliana_Mello_20260227_110445.jpg",
+      "id_number": 23,
+      "id": "D09-023"
+    }
+  }
 }
