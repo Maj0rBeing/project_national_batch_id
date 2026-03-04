@@ -1,6 +1,238 @@
 {
   "district_number": 13,
   "district_label": "District 13",
-  "last_id_number": 0,
-  "records": {}
+  "last_id_number": 33,
+  "records": {
+    "schanovie|ollivirre": {
+      "firstname": "Schanovie",
+      "lastname": "Ollivirre",
+      "photo": "Schanovie_Ollivirre_20260302_095735.jpg",
+      "id_number": 1,
+      "id": "D13-001"
+    },
+    "lynnesha|headley": {
+      "firstname": "Lynnesha",
+      "lastname": "Headley",
+      "photo": "Lynnesha_Headley_20260302_095854.jpg",
+      "id_number": 2,
+      "id": "D13-002"
+    },
+    "annastacia|george": {
+      "firstname": "Annastacia",
+      "lastname": "George",
+      "photo": "Annastacia_George_20260302_103003.jpg",
+      "id_number": 3,
+      "id": "D13-003"
+    },
+    "malia|horatio": {
+      "firstname": "Malia",
+      "lastname": "Horatio",
+      "photo": "Malia_Horatio_20260302_114013.jpg",
+      "id_number": 4,
+      "id": "D13-004"
+    },
+    "alyssa|branche": {
+      "firstname": "Alyssa",
+      "lastname": "Branche",
+      "photo": "Alyssa_Branche_20260302_114148.jpg",
+      "id_number": 5,
+      "id": "D13-005"
+    },
+    "cassy|mingo": {
+      "firstname": "Cassy",
+      "lastname": "Mingo",
+      "photo": "Cassy_Mingo_20260302_114645.jpg",
+      "id_number": 6,
+      "id": "D13-006"
+    },
+    "jasmin|mohamed": {
+      "firstname": "Jasmin",
+      "lastname": "Mohamed",
+      "photo": "Jasmin_Mohamed_20260302_114829.jpg",
+      "id_number": 7,
+      "id": "D13-007"
+    },
+    "carnessa|williams": {
+      "firstname": "Carnessa",
+      "lastname": "Williams",
+      "photo": "Carnessa_Williams_20260302_115002.jpg",
+      "id_number": 8,
+      "id": "D13-008"
+    },
+    "jermaine|tappin": {
+      "firstname": "Jermaine",
+      "lastname": "Tappin",
+      "photo": "Jermaine_Tappin_20260302_115148.jpg",
+      "id_number": 9,
+      "id": "D13-009"
+    },
+    "jedeiah|wilburgh": {
+      "firstname": "Jedeiah",
+      "lastname": "Wilburgh",
+      "photo": "Jedeiah_Wilburgh_20260302_115315.jpg",
+      "id_number": 10,
+      "id": "D13-010"
+    },
+    "brian|roberts": {
+      "firstname": "Brian",
+      "lastname": "Roberts",
+      "photo": "Brian_Roberts_20260302_115435.jpg",
+      "id_number": 11,
+      "id": "D13-011"
+    },
+    "seth|williams": {
+      "firstname": "Seth",
+      "lastname": "Williams",
+      "photo": "Seth_Williams_20260302_115529.jpg",
+      "id_number": 12,
+      "id": "D13-012"
+    },
+    "dilshawn|alleyne": {
+      "firstname": "Dilshawn",
+      "lastname": "Alleyne",
+      "photo": "Dilshawn_Alleyne_20260302_120319.jpg",
+      "id_number": 13,
+      "id": "D13-013"
+    },
+    "okel|roberts": {
+      "firstname": "Okel",
+      "lastname": "Roberts",
+      "photo": "Okel_Roberts_20260302_120538.jpg",
+      "id_number": 14,
+      "id": "D13-014"
+    },
+    "ezekiel|stanford": {
+      "firstname": "Ezekiel",
+      "lastname": "Stanford",
+      "photo": "Ezekiel_Stanford_20260302_120646.jpg",
+      "id_number": 15,
+      "id": "D13-015"
+    },
+    "donovan|welcome": {
+      "firstname": "Donovan",
+      "lastname": "Welcome",
+      "photo": "Donovan_Welcome_20260302_121112.jpg",
+      "id_number": 16,
+      "id": "D13-016"
+    },
+    "rokella|narine": {
+      "firstname": "Rokella",
+      "lastname": "Narine",
+      "photo": "Rokella_Narine_20260302_121252.jpg",
+      "id_number": 17,
+      "id": "D13-017"
+    },
+    "jeremiah|griffith": {
+      "firstname": "Jeremiah",
+      "lastname": "Griffith",
+      "photo": "Jeremiah_Griffith_20260302_121401.jpg",
+      "id_number": 18,
+      "id": "D13-018"
+    },
+    "marvin|sealey": {
+      "firstname": "Marvin",
+      "lastname": "Sealey",
+      "photo": "Marvin_Sealey_20260302_121542.jpg",
+      "id_number": 19,
+      "id": "D13-019"
+    },
+    "issey|williams": {
+      "firstname": "Issey",
+      "lastname": "Williams",
+      "photo": "Issey_Williams_20260302_121631.jpg",
+      "id_number": 20,
+      "id": "D13-020"
+    },
+    "treon|marshall": {
+      "firstname": "Treon",
+      "lastname": "Marshall",
+      "photo": "Treon_Marshall_20260302_144327.jpg",
+      "id_number": 21,
+      "id": "D13-021"
+    },
+    "herbert|gorden": {
+      "firstname": "Herbert",
+      "lastname": "Gorden",
+      "photo": "Herbert_Gorden_20260302_172708.jpg",
+      "id_number": 22,
+      "id": "D13-022"
+    },
+    "marcus|vanderstoop": {
+      "firstname": "Marcus",
+      "lastname": "Vanderstoop",
+      "photo": "Marcus_Vanderstoop_20260302_172905.jpg",
+      "id_number": 23,
+      "id": "D13-023"
+    },
+    "kevon|carter": {
+      "firstname": "Kevon",
+      "lastname": "Carter",
+      "photo": "Kevon_Carter_20260302_173045.jpg",
+      "id_number": 24,
+      "id": "D13-024"
+    },
+    "rihanna|accra": {
+      "firstname": "Rihanna",
+      "lastname": "Accra",
+      "photo": "Rihanna_Accra_20260304_105420.jpg",
+      "id_number": 25,
+      "id": "D13-025"
+    },
+    "malia|brummel": {
+      "firstname": "Malia",
+      "lastname": "Brummel",
+      "photo": "Malia_Brummel_20260304_122334.jpg",
+      "id_number": 26,
+      "id": "D13-026"
+    },
+    "ceira|armstrong": {
+      "firstname": "Ceira",
+      "lastname": "Armstrong",
+      "photo": "Ceira_Armstrong_20260304_123538.jpg",
+      "id_number": 27,
+      "id": "D13-027"
+    },
+    "parisa|todd": {
+      "firstname": "Parisa",
+      "lastname": "Todd",
+      "photo": "Parisa_Todd_20260304_124819.jpg",
+      "id_number": 28,
+      "id": "D13-028"
+    },
+    "emily|hicken": {
+      "firstname": "Emily",
+      "lastname": "Hicken",
+      "photo": "Emily_Hicken_20260304_125350.jpg",
+      "id_number": 29,
+      "id": "D13-029"
+    },
+    "bayshon|carter": {
+      "firstname": "Bayshon",
+      "lastname": "Carter",
+      "photo": "Bayshon_Carter_20260304_130123.jpg",
+      "id_number": 30,
+      "id": "D13-030"
+    },
+    "atabia|barret": {
+      "firstname": "Atabia",
+      "lastname": "Barret",
+      "photo": "Atabia_Barret_20260304_130246.jpg",
+      "id_number": 31,
+      "id": "D13-031"
+    },
+    "janaya|peters": {
+      "firstname": "Janaya",
+      "lastname": "Peters",
+      "photo": "Janaya_Peters_20260304_130634.jpg",
+      "id_number": 32,
+      "id": "D13-032"
+    },
+    "cyan|mingo": {
+      "firstname": "Cyan",
+      "lastname": "Mingo",
+      "photo": "Cyan_Mingo_20260304_132316.jpg",
+      "id_number": 33,
+      "id": "D13-033"
+    }
+  }
 }

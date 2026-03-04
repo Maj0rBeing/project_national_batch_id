@@ -1,7 +1,7 @@
 {
   "district_number": 1,
   "district_label": "District 1",
-  "last_id_number": 87,
+  "last_id_number": 93,
   "records": {
     "oshelle|bartrum": {
       "firstname": "Oshelle",
@@ -237,7 +237,7 @@
     "jada|la cruz": {
       "firstname": "Jada",
       "lastname": "La Cruz",
-      "photo": "Jada_La_Cruz_20260226_214926.jpg",
+      "photo": "Jada_La_Cruz_20260227_133729.jpg",
       "id_number": 34,
       "id": "D01-034"
     },
@@ -293,14 +293,14 @@
     "rebecca|sattaur": {
       "firstname": "Rebecca",
       "lastname": "Sattaur",
-      "photo": "Rebecca_Sattaur_20260226_221008.jpg",
+      "photo": "Rebecca_Sattaur_20260227_131704.jpg",
       "id_number": 42,
       "id": "D01-042"
     },
     "jewel|peters": {
       "firstname": "Jewel",
       "lastname": "Peters",
-      "photo": "Jewel_Peters_20260226_221110.jpg",
+      "photo": "Jewel_Peters_20260227_132445.jpg",
       "id_number": 43,
       "id": "D01-043"
     },
@@ -611,6 +611,48 @@
       "photo": "Aria_Welcome_20260227_114623.jpg",
       "id_number": 87,
       "id": "D01-087"
+    },
+    "isabell|hinjosa": {
+      "firstname": "Isabell",
+      "lastname": "Hinjosa",
+      "photo": "Isabell_Hinjosa_20260227_132226.jpg",
+      "id_number": 88,
+      "id": "D01-088"
+    },
+    "isola|france": {
+      "firstname": "Isola",
+      "lastname": "France",
+      "photo": "Isola_France_20260227_132712.jpg",
+      "id_number": 89,
+      "id": "D01-089"
+    },
+    "narissa|abraham": {
+      "firstname": "Narissa",
+      "lastname": "Abraham",
+      "photo": "Narissa_Abraham_20260227_143052.jpg",
+      "id_number": 90,
+      "id": "D01-090"
+    },
+    "malia|peters": {
+      "firstname": "Malia",
+      "lastname": "Peters",
+      "photo": "Malia_Peters_20260227_143207.jpg",
+      "id_number": 91,
+      "id": "D01-091"
+    },
+    "shania|ho": {
+      "firstname": "Shania",
+      "lastname": "Ho",
+      "photo": "Shania_Ho_20260227_143912.jpg",
+      "id_number": 92,
+      "id": "D01-092"
+    },
+    "tenesha|henry": {
+      "firstname": "Tenesha",
+      "lastname": "Henry",
+      "photo": "Tenesha_Henry_20260227_144328.jpg",
+      "id_number": 93,
+      "id": "D01-093"
     }
   }
 }

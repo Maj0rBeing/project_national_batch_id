@@ -1,7 +1,7 @@
 {
   "district_number": 8,
   "district_label": "District 8",
-  "last_id_number": 37,
+  "last_id_number": 38,
   "records": {
     "jada|lamaizon": {
       "firstname": "Jada",
@@ -261,6 +261,13 @@
       "photo": "Akeem_Xavier_20260226_101829.jpg",
       "id_number": 37,
       "id": "D08-037"
+    },
+    "xavier|bernard": {
+      "firstname": "Xavier",
+      "lastname": "Bernard",
+      "photo": "Xavier_Bernard_20260227_122742.jpg",
+      "id_number": 38,
+      "id": "D08-038"
     }
   }
 }

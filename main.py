@@ -1,13 +1,17 @@
 ﻿from __future__ import annotations
 
+import argparse
 import csv
 import json
 import os
 import re
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
+
+# Module-level font cache: (font_path_or_None, size) -> font object
+_font_cache: Dict[tuple, ImageFont.ImageFont] = {}
 
 
 # ==========================
@@ -333,6 +337,48 @@ def get_or_create_district_id(
     return assigned_id
 
 
+def assign_id_in_memory(
+    registry: Dict[str, Any],
+    district_number: int,
+    firstname: str,
+    lastname: str,
+    photo_filename: str,
+) -> str:
+    """Assign or retrieve a district ID using an in-memory registry dict (no file I/O)."""
+    records = registry.setdefault("records", {})
+    person_key = normalize_person_key(firstname, lastname)
+    existing = records.get(person_key)
+
+    if isinstance(existing, dict) and existing.get("id_number"):
+        id_number = int(existing["id_number"])
+        existing["id"] = format_assigned_id(district_number, id_number)
+        existing["firstname"] = firstname
+        existing["lastname"] = lastname
+        existing["photo"] = photo_filename
+        registry["last_id_number"] = max(int(registry.get("last_id_number", 0)), id_number)
+        return str(existing["id"])
+
+    max_existing = int(registry.get("last_id_number", 0))
+    for record in records.values():
+        if isinstance(record, dict):
+            try:
+                max_existing = max(max_existing, int(record.get("id_number", 0)))
+            except Exception:
+                pass
+
+    next_id_number = max_existing + 1
+    assigned_id = format_assigned_id(district_number, next_id_number)
+    records[person_key] = {
+        "firstname": firstname,
+        "lastname": lastname,
+        "photo": photo_filename,
+        "id_number": next_id_number,
+        "id": assigned_id,
+    }
+    registry["last_id_number"] = next_id_number
+    return assigned_id
+
+
 def get_csv_value(row: Dict[str, str], *keys: str) -> str:
     for key in keys:
         value = row.get(key)
@@ -345,15 +391,21 @@ def is_athlete_role(role: str) -> bool:
     return normalize_spaces(role).lower() == "athlete"
 
 
-def load_font(font_path: Optional[str], size: int) -> ImageFont.FreeTypeFont:
-    # Use custom font if supplied and exists, otherwise try Arial, otherwise default
-    if font_path and os.path.exists(font_path):
-        return ImageFont.truetype(font_path, size)
+def load_font(font_path: Optional[str], size: int) -> ImageFont.ImageFont:
+    key = (font_path, size)
+    if key in _font_cache:
+        return _font_cache[key]
 
-    try:
-        return ImageFont.truetype("arial.ttf", size)
-    except Exception:
-        return ImageFont.load_default()
+    if font_path and os.path.exists(font_path):
+        font = ImageFont.truetype(font_path, size)
+    else:
+        try:
+            font = ImageFont.truetype("arial.ttf", size)
+        except Exception:
+            font = ImageFont.load_default()
+
+    _font_cache[key] = font
+    return font
 
 
 def text_width(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont) -> int:
@@ -441,13 +493,13 @@ def create_id_card(
     district: str,
     assigned_id: str,
     photo_filename: str,
-    template_path: str,
+    template_image: Image.Image,
     photo_folder: str,
     output_folder: str,
 ) -> str:
     full_name = f"{firstname} {lastname}".strip()
 
-    template = Image.open(template_path).convert("RGBA")
+    template = template_image.copy()
     draw = ImageDraw.Draw(template)
 
     font_name = fit_font_size(
@@ -527,11 +579,25 @@ def create_id_card(
     out_name = safe_filename(f"{firstname}_{lastname}").upper() + ".png"
     out_path = os.path.join(output_folder, out_name)
     template.convert("RGB").save(out_path)
-    print(f"Saved: {out_path}")
     return out_path
 
 
-def batch_generate_id_cards(csv_file: str):
+def validate_photos(rows: List[Dict[str, str]], photo_folder: str) -> None:
+    missing: List[str] = []
+    seen: Set[str] = set()
+    for row in rows:
+        photo = get_csv_value(row, "Photo", "photo", "PHOTO")
+        if photo and photo not in seen:
+            seen.add(photo)
+            if not os.path.exists(os.path.join(photo_folder, photo)):
+                missing.append(photo)
+    if missing:
+        print(f"[WARN] {len(missing)} photo(s) not found in '{photo_folder}':")
+        for name in missing:
+            print(f"       - {name}")
+
+
+def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None) -> None:
     if not os.path.exists(TEMPLATE_PATH):
         raise FileNotFoundError(f"Missing template: {TEMPLATE_PATH} (put id_template.png in the project root)")
     initialize_district_registries(DISTRICT_REGISTRY_FOLDER)
@@ -539,76 +605,129 @@ def batch_generate_id_cards(csv_file: str):
     report_rows_by_district = create_batch_report_buckets()
     print(f"Batch timestamp: {batch_timestamp}")
 
-    # IMPORTANT: utf-8-sig removes BOM (\\ufeff) from 'firstname'
+    # IMPORTANT: utf-8-sig removes BOM (\ufeff) from 'firstname'
     with open(csv_file, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         print(f"Detected headers: {reader.fieldnames}")
+        all_rows = list(reader)
 
-        for i, row in enumerate(reader, start=1):
+    total = len(all_rows)
+    print(f"Total rows: {total}")
+
+    # Photo pre-validation
+    validate_photos(all_rows, PHOTO_FOLDER)
+
+    # Load all district registries into memory once
+    registries: Dict[int, Dict[str, Any]] = {
+        n: load_district_registry(DISTRICT_REGISTRY_FOLDER, n)
+        for n in range(DISTRICT_MIN, DISTRICT_MAX + 1)
+    }
+    modified_districts: Set[int] = set()
+
+    # Open template once
+    template_image = Image.open(TEMPLATE_PATH).convert("RGBA")
+
+    stats = {"generated": 0, "skipped": 0, "warnings": 0, "errors": 0}
+
+    for i, row in enumerate(all_rows, start=1):
+        try:
+            processed_flag = get_csv_value(row, "processed", "Processed", "PROCESSED")
+            if processed_flag.upper() == "YES":
+                stats["skipped"] += 1
+                continue
+
+            firstname = get_csv_value(row, "firstname", "Firstname", "FIRSTNAME")
+            lastname = get_csv_value(row, "lastname", "Lastname", "LASTNAME")
+            role = get_csv_value(row, "Role", "role", "ROLE")
+            photo = get_csv_value(row, "Photo", "photo", "PHOTO")
+            district = get_csv_value(row, "District", "district", "distrct", "Distrct", "DISTRICT")
+            school = get_csv_value(row, "School", "school", "SCHOOL")
+
+            if not firstname and not lastname:
+                print(f"[WARN] Row {i}/{total}: missing firstname/lastname - skipping")
+                stats["warnings"] += 1
+                continue
+
+            if not district:
+                print(f"[WARN] Row {i}/{total}: missing district - skipping")
+                stats["warnings"] += 1
+                continue
+
             try:
-                firstname = get_csv_value(row, "firstname", "Firstname", "FIRSTNAME")
-                lastname = get_csv_value(row, "lastname", "Lastname", "LASTNAME")
-                role = get_csv_value(row, "Role", "role", "ROLE")
-                photo = get_csv_value(row, "Photo", "photo", "PHOTO")
-                district = get_csv_value(row, "District", "district", "distrct", "Distrct", "DISTRICT")
-                school = get_csv_value(row, "School", "school", "SCHOOL")
+                district_number = extract_district_number(district)
+            except ValueError as e:
+                print(f"[WARN] Row {i}/{total}: {e} - skipping")
+                stats["warnings"] += 1
+                continue
 
-                if not firstname and not lastname:
-                    print(f"[WARN] Row {i}: missing firstname/lastname - skipping")
-                    continue
+            if district_filter is not None and district_number != district_filter:
+                continue
 
-                if not district:
-                    print(f"[WARN] Row {i}: missing district - skipping")
-                    continue
-
-                try:
-                    district_number = extract_district_number(district)
-                except ValueError as e:
-                    print(f"[WARN] Row {i}: {e} - skipping")
-                    continue
-
-                assigned_id = ""
-                if is_athlete_role(role):
-                    assigned_id = get_or_create_district_id(
-                        registry_folder=DISTRICT_REGISTRY_FOLDER,
-                        district_number=district_number,
-                        firstname=firstname,
-                        lastname=lastname,
-                        photo_filename=photo,
-                    )
-
-                output_path = create_id_card(
+            assigned_id = ""
+            if is_athlete_role(role):
+                assigned_id = assign_id_in_memory(
+                    registry=registries[district_number],
+                    district_number=district_number,
                     firstname=firstname,
                     lastname=lastname,
-                    role=role,
-                    school=school,
-                    district=district,
-                    assigned_id=assigned_id,
                     photo_filename=photo,
-                    template_path=TEMPLATE_PATH,
-                    photo_folder=PHOTO_FOLDER,
-                    output_folder=district_output_folder(OUTPUT_FOLDER, district_number, batch_timestamp),
                 )
-                report_rows_by_district[district_number].append(
-                    {
-                        "batch_timestamp": batch_timestamp,
-                        "district_number": str(district_number),
-                        "district_text": district,
-                        "assigned_id": assigned_id,
-                        "firstname": firstname,
-                        "lastname": lastname,
-                        "role": role,
-                        "school": school,
-                        "photo": photo,
-                        "output_file": output_path,
-                    }
-                )
+                modified_districts.add(district_number)
 
-            except Exception as e:
-                print(f"[ERROR] Row {i} failed: {e}")
+            output_path = create_id_card(
+                firstname=firstname,
+                lastname=lastname,
+                role=role,
+                school=school,
+                district=district,
+                assigned_id=assigned_id,
+                photo_filename=photo,
+                template_image=template_image,
+                photo_folder=PHOTO_FOLDER,
+                output_folder=district_output_folder(OUTPUT_FOLDER, district_number, batch_timestamp),
+            )
+            print(f"[{i}/{total}] Saved: {output_path}")
+            stats["generated"] += 1
+            report_rows_by_district[district_number].append(
+                {
+                    "batch_timestamp": batch_timestamp,
+                    "district_number": str(district_number),
+                    "district_text": district,
+                    "assigned_id": assigned_id,
+                    "firstname": firstname,
+                    "lastname": lastname,
+                    "role": role,
+                    "school": school,
+                    "photo": photo,
+                    "output_file": output_path,
+                }
+            )
+
+        except Exception as e:
+            print(f"[ERROR] Row {i}/{total} failed: {e}")
+            stats["errors"] += 1
+
+    # Save only modified registries
+    for district_number in modified_districts:
+        save_district_registry(DISTRICT_REGISTRY_FOLDER, district_number, registries[district_number])
 
     write_excel_reports(REPORT_FOLDER, batch_timestamp, report_rows_by_district)
 
+    print(
+        f"\n=== Done === generated={stats['generated']}  skipped(processed)={stats['skipped']}"
+        f"  warnings={stats['warnings']}  errors={stats['errors']}"
+    )
+
 
 if __name__ == "__main__":
-    batch_generate_id_cards(CSV_FILE)
+    parser = argparse.ArgumentParser(description="Batch ID card generator")
+    parser.add_argument("--csv", default=CSV_FILE, help="Path to the CSV input file")
+    parser.add_argument(
+        "--district",
+        type=int,
+        default=None,
+        metavar="N",
+        help=f"Process only this district number ({DISTRICT_MIN}-{DISTRICT_MAX})",
+    )
+    args = parser.parse_args()
+    batch_generate_id_cards(csv_file=args.csv, district_filter=args.district)
