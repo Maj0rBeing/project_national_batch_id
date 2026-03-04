@@ -187,9 +187,11 @@ def write_excel_reports(
         "school",
         "photo",
         "output_file",
+        "rendered_at",
     ]
     # Requested uniqueness key for report rows (across batches).
     unique_key_headers = ["assigned_id", "firstname", "lastname"]
+    NEW_ENTRY_FILL_COLOR = "92D050"  # bright green — reserved for brand-new rows only
     batch_fill_palette = [
         "FFF2CC",  # light yellow
         "DDEBF7",  # light blue
@@ -231,6 +233,8 @@ def write_excel_reports(
 
         existing_index: Dict[tuple, int] = {}
         existing_by_assigned_id: Dict[str, int] = {}
+        rendered_at_col = header_to_col["rendered_at"]
+        output_file_col = header_to_col["output_file"]
         for row_idx in range(2, sheet.max_row + 1):
             key = tuple(
                 norm(sheet.cell(row=row_idx, column=header_to_col[h]).value)
@@ -242,6 +246,16 @@ def write_excel_reports(
             if assigned_id_key:
                 existing_by_assigned_id[assigned_id_key] = row_idx
 
+        # Back-populate rendered_at for historical rows that predate this feature.
+        for row_idx in range(2, sheet.max_row + 1):
+            if sheet.cell(row=row_idx, column=rendered_at_col).value:
+                continue
+            output_file = str(sheet.cell(row=row_idx, column=output_file_col).value or "").strip()
+            if output_file and os.path.exists(output_file):
+                mtime = datetime.fromtimestamp(os.path.getmtime(output_file)).strftime("%Y%m%d_%H%M%S")
+                sheet.cell(row=row_idx, column=rendered_at_col, value=mtime)
+
+        new_row_indices: Set[int] = set()
         for row in district_rows:
             row_key = tuple(norm(row.get(h, "")) for h in unique_key_headers)
             target_row_idx = existing_index.get(row_key)
@@ -254,6 +268,7 @@ def write_excel_reports(
 
             if target_row_idx is None:
                 target_row_idx = sheet.max_row + 1
+                new_row_indices.add(target_row_idx)
 
             existing_index[row_key] = target_row_idx
             assigned_id_only = norm(row.get("assigned_id", ""))
@@ -261,33 +276,47 @@ def write_excel_reports(
                 existing_by_assigned_id[assigned_id_only] = target_row_idx
 
             for header in headers:
-                sheet.cell(row=target_row_idx, column=header_to_col[header], value=row.get(header, ""))
+                if header == "rendered_at":
+                    # Preserve once set — never overwrite the original render timestamp.
+                    cell = sheet.cell(row=target_row_idx, column=header_to_col[header])
+                    if not cell.value:
+                        cell.value = row.get(header, "")
+                else:
+                    sheet.cell(row=target_row_idx, column=header_to_col[header], value=row.get(header, ""))
 
-        # Color rows by batch_timestamp group across the full district report for quick cross-reference.
-        timestamp_col = header_to_col["batch_timestamp"]
+        # Color rows:
+        #   - Brand-new rows (added to report for the first time) → bright green
+        #   - All other rows → grouped by rendered_at (when the PNG was originally created)
+        new_entry_fill = PatternFill(fill_type="solid", start_color=NEW_ENTRY_FILL_COLOR, end_color=NEW_ENTRY_FILL_COLOR)
         batch_fill_map: Dict[str, Any] = {}
         next_fill_index = 0
         no_fill = PatternFill(fill_type=None)
         for row_idx in range(2, sheet.max_row + 1):
-            batch_value = str(sheet.cell(row=row_idx, column=timestamp_col).value or "").strip()
-            if not batch_value:
-                fill = no_fill
+            if row_idx in new_row_indices:
+                fill = new_entry_fill
             else:
-                if batch_value not in batch_fill_map:
-                    color = batch_fill_palette[next_fill_index % len(batch_fill_palette)]
-                    batch_fill_map[batch_value] = PatternFill(
-                        fill_type="solid",
-                        start_color=color,
-                        end_color=color,
-                    )
-                    next_fill_index += 1
-                fill = batch_fill_map[batch_value]
+                rendered_value = str(sheet.cell(row=row_idx, column=rendered_at_col).value or "").strip()
+                if not rendered_value:
+                    fill = no_fill
+                else:
+                    if rendered_value not in batch_fill_map:
+                        color = batch_fill_palette[next_fill_index % len(batch_fill_palette)]
+                        batch_fill_map[rendered_value] = PatternFill(
+                            fill_type="solid",
+                            start_color=color,
+                            end_color=color,
+                        )
+                        next_fill_index += 1
+                    fill = batch_fill_map[rendered_value]
 
             for col_idx in range(1, len(headers) + 1):
                 sheet.cell(row=row_idx, column=col_idx).fill = fill
 
-        workbook.save(report_path)
-        print(f"Report: {report_path}")
+        try:
+            workbook.save(report_path)
+            print(f"Report: {report_path}")
+        except PermissionError:
+            print(f"[SKIP] {report_path} — file is open in another program, close it and re-run.")
 
 
 def get_or_create_district_id(
@@ -624,18 +653,21 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
     }
     modified_districts: Set[int] = set()
 
+    # Detect districts with no report file — rows for these districts bypass processed=YES
+    missing_report_districts: Set[int] = {
+        n for n in range(DISTRICT_MIN, DISTRICT_MAX + 1)
+        if not os.path.exists(district_report_file_path(REPORT_FOLDER, n))
+    }
+    if missing_report_districts:
+        print(f"[INFO] Missing report file(s) for district(s): {sorted(missing_report_districts)} — will rebuild from CSV.")
+
     # Open template once
     template_image = Image.open(TEMPLATE_PATH).convert("RGBA")
 
-    stats = {"generated": 0, "skipped": 0, "warnings": 0, "errors": 0}
+    stats = {"generated": 0, "skipped": 0, "rebuilt": 0, "card_exists": 0, "warnings": 0, "errors": 0}
 
     for i, row in enumerate(all_rows, start=1):
         try:
-            processed_flag = get_csv_value(row, "processed", "Processed", "PROCESSED")
-            if processed_flag.upper() == "YES":
-                stats["skipped"] += 1
-                continue
-
             firstname = get_csv_value(row, "firstname", "Firstname", "FIRSTNAME")
             lastname = get_csv_value(row, "lastname", "Lastname", "LASTNAME")
             role = get_csv_value(row, "Role", "role", "ROLE")
@@ -663,6 +695,13 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
             if district_filter is not None and district_number != district_filter:
                 continue
 
+            processed_flag = get_csv_value(row, "processed", "Processed", "PROCESSED")
+            if processed_flag.upper() == "YES":
+                if district_number not in missing_report_districts:
+                    stats["skipped"] += 1
+                    continue
+                stats["rebuilt"] += 1
+
             assigned_id = ""
             if is_athlete_role(role):
                 assigned_id = assign_id_in_memory(
@@ -674,20 +713,30 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
                 )
                 modified_districts.add(district_number)
 
-            output_path = create_id_card(
-                firstname=firstname,
-                lastname=lastname,
-                role=role,
-                school=school,
-                district=district,
-                assigned_id=assigned_id,
-                photo_filename=photo,
-                template_image=template_image,
-                photo_folder=PHOTO_FOLDER,
-                output_folder=district_output_folder(OUTPUT_FOLDER, district_number, batch_timestamp),
-            )
-            print(f"[{i}/{total}] Saved: {output_path}")
-            stats["generated"] += 1
+            out_folder = district_output_folder(OUTPUT_FOLDER, district_number, batch_timestamp)
+            expected_path = os.path.join(out_folder, safe_filename(f"{firstname}_{lastname}").upper() + ".png")
+
+            if os.path.exists(expected_path):
+                print(f"[{i}/{total}] Exists (skipped): {expected_path}")
+                stats["card_exists"] += 1
+                output_path = expected_path
+                rendered_at = datetime.fromtimestamp(os.path.getmtime(output_path)).strftime("%Y%m%d_%H%M%S")
+            else:
+                output_path = create_id_card(
+                    firstname=firstname,
+                    lastname=lastname,
+                    role=role,
+                    school=school,
+                    district=district,
+                    assigned_id=assigned_id,
+                    photo_filename=photo,
+                    template_image=template_image,
+                    photo_folder=PHOTO_FOLDER,
+                    output_folder=out_folder,
+                )
+                print(f"[{i}/{total}] Saved: {output_path}")
+                stats["generated"] += 1
+                rendered_at = batch_timestamp
             report_rows_by_district[district_number].append(
                 {
                     "batch_timestamp": batch_timestamp,
@@ -700,6 +749,7 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
                     "school": school,
                     "photo": photo,
                     "output_file": output_path,
+                    "rendered_at": rendered_at,
                 }
             )
 
@@ -714,9 +764,113 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
     write_excel_reports(REPORT_FOLDER, batch_timestamp, report_rows_by_district)
 
     print(
-        f"\n=== Done === generated={stats['generated']}  skipped(processed)={stats['skipped']}"
+        f"\n=== Done === generated={stats['generated']}  exists(skipped)={stats['card_exists']}"
+        f"  skipped(processed)={stats['skipped']}  rebuilt(missing report)={stats['rebuilt']}"
         f"  warnings={stats['warnings']}  errors={stats['errors']}"
     )
+
+
+def format_existing_reports(root_report_folder: str) -> None:
+    """Migrate all existing district report files: add rendered_at column and reapply color coding."""
+    try:
+        from openpyxl import load_workbook
+        from openpyxl.styles import PatternFill
+    except ModuleNotFoundError as e:
+        raise ModuleNotFoundError(
+            "Missing dependency 'openpyxl'. Install it (for example: pip install -r requirements.txt)."
+        ) from e
+
+    headers = [
+        "batch_timestamp",
+        "district_number",
+        "district_text",
+        "assigned_id",
+        "firstname",
+        "lastname",
+        "role",
+        "school",
+        "photo",
+        "output_file",
+        "rendered_at",
+    ]
+    NEW_ENTRY_FILL_COLOR = "92D050"
+    batch_fill_palette = [
+        "FFF2CC",  # light yellow
+        "DDEBF7",  # light blue
+        "E2F0D9",  # light green
+        "FCE4D6",  # light orange
+        "EAD1DC",  # light pink
+        "D9EAD3",  # pale green
+        "D0E0E3",  # pale cyan
+        "F4CCCC",  # pale red
+    ]
+
+    found = 0
+    for district_number in range(DISTRICT_MIN, DISTRICT_MAX + 1):
+        report_path = district_report_file_path(root_report_folder, district_number)
+        if not os.path.exists(report_path):
+            continue
+
+        found += 1
+        workbook = load_workbook(report_path)
+        sheet = workbook.active
+
+        # Ensure all headers are present (adds rendered_at column if missing).
+        existing_headers = [sheet.cell(row=1, column=i + 1).value for i in range(len(headers))]
+        if existing_headers != headers:
+            for i, header in enumerate(headers, start=1):
+                sheet.cell(row=1, column=i, value=header)
+
+        header_to_col = {header: index + 1 for index, header in enumerate(headers)}
+        rendered_at_col = header_to_col["rendered_at"]
+        output_file_col = header_to_col["output_file"]
+
+        # Back-populate rendered_at from file mtime for any row that doesn't have it yet.
+        populated = 0
+        for row_idx in range(2, sheet.max_row + 1):
+            if sheet.cell(row=row_idx, column=rendered_at_col).value:
+                continue
+            output_file = str(sheet.cell(row=row_idx, column=output_file_col).value or "").strip()
+            if output_file and os.path.exists(output_file):
+                mtime = datetime.fromtimestamp(os.path.getmtime(output_file)).strftime("%Y%m%d_%H%M%S")
+                sheet.cell(row=row_idx, column=rendered_at_col, value=mtime)
+                populated += 1
+
+        # Reapply color coding grouped by rendered_at across the full sheet.
+        batch_fill_map: Dict[str, Any] = {}
+        next_fill_index = 0
+        no_fill = PatternFill(fill_type=None)
+        new_entry_fill = PatternFill(
+            fill_type="solid", start_color=NEW_ENTRY_FILL_COLOR, end_color=NEW_ENTRY_FILL_COLOR
+        )
+        for row_idx in range(2, sheet.max_row + 1):
+            rendered_value = str(sheet.cell(row=row_idx, column=rendered_at_col).value or "").strip()
+            if not rendered_value:
+                fill = no_fill
+            else:
+                if rendered_value not in batch_fill_map:
+                    color = batch_fill_palette[next_fill_index % len(batch_fill_palette)]
+                    batch_fill_map[rendered_value] = PatternFill(
+                        fill_type="solid",
+                        start_color=color,
+                        end_color=color,
+                    )
+                    next_fill_index += 1
+                fill = batch_fill_map[rendered_value]
+
+            for col_idx in range(1, len(headers) + 1):
+                sheet.cell(row=row_idx, column=col_idx).fill = fill
+
+        try:
+            workbook.save(report_path)
+            print(f"Formatted: {report_path}  (rendered_at populated: {populated} rows, color groups: {len(batch_fill_map)})")
+        except PermissionError:
+            print(f"[SKIP] {report_path} — file is open in another program, close it and re-run.")
+
+    if found == 0:
+        print(f"No report files found in '{root_report_folder}'.")
+    else:
+        print(f"\nDone — {found} report(s) formatted.")
 
 
 if __name__ == "__main__":
@@ -729,5 +883,13 @@ if __name__ == "__main__":
         metavar="N",
         help=f"Process only this district number ({DISTRICT_MIN}-{DISTRICT_MAX})",
     )
+    parser.add_argument(
+        "--format-reports",
+        action="store_true",
+        help="Format all existing district report files (add rendered_at, recolor) then exit.",
+    )
     args = parser.parse_args()
-    batch_generate_id_cards(csv_file=args.csv, district_filter=args.district)
+    if args.format_reports:
+        format_existing_reports(REPORT_FOLDER)
+    else:
+        batch_generate_id_cards(csv_file=args.csv, district_filter=args.district)
