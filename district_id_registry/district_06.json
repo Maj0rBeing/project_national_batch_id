@@ -1,7 +1,7 @@
 {
   "district_number": 6,
   "district_label": "District 6",
-  "last_id_number": 27,
+  "last_id_number": 35,
   "records": {
     "eldon|moore": {
       "firstname": "Eldon",
@@ -139,21 +139,21 @@
     "jonathan|ashram": {
       "firstname": "Jonathan",
       "lastname": "Ashram",
-      "photo": "Jonathan_Ashram_20260226_140251.jpg",
+      "photo": "Jonathan_Ashram_20260306_084218.jpg",
       "id_number": 20,
       "id": "D06-020"
     },
     "presca|glasgow": {
       "firstname": "Presca",
       "lastname": "Glasgow",
-      "photo": "Presca_Glasgow_20260226_140408.jpg",
+      "photo": "Presca_Glasgow_20260306_090000.jpg",
       "id_number": 21,
       "id": "D06-021"
     },
     "vanisha|leitch": {
       "firstname": "Vanisha",
       "lastname": "Leitch",
-      "photo": "Vanisha_Leitch_20260226_140540.jpg",
+      "photo": "Vanisha_Leitch_20260306_091118.jpg",
       "id_number": 22,
       "id": "D06-022"
     },
@@ -191,6 +191,62 @@
       "photo": "Timothy_Morris_20260227_091028.jpg",
       "id_number": 27,
       "id": "D06-027"
+    },
+    "elijah|blackett": {
+      "firstname": "Elijah",
+      "lastname": "Blackett",
+      "photo": "Elijah_Blackett_20260306_085827.jpg",
+      "id_number": 28,
+      "id": "D06-028"
+    },
+    "troy|leitch": {
+      "firstname": "Troy",
+      "lastname": "Leitch",
+      "photo": "Troy_Leitch_20260306_090546.jpg",
+      "id_number": 29,
+      "id": "D06-029"
+    },
+    "monique|george": {
+      "firstname": "Monique",
+      "lastname": "George",
+      "photo": "Monique_George_20260306_090717.jpg",
+      "id_number": 30,
+      "id": "D06-030"
+    },
+    "stefon|mansell": {
+      "firstname": "Stefon",
+      "lastname": "Mansell",
+      "photo": "Stefon_Mansell_20260306_090802.jpg",
+      "id_number": 31,
+      "id": "D06-031"
+    },
+    "rebecca|gray": {
+      "firstname": "Rebecca",
+      "lastname": "Gray",
+      "photo": "Rebecca_Gray_20260306_090859.jpg",
+      "id_number": 32,
+      "id": "D06-032"
+    },
+    "zyan|liverpool": {
+      "firstname": "Zyan",
+      "lastname": "Liverpool",
+      "photo": "Zyan_Liverpool_20260306_091014.jpg",
+      "id_number": 33,
+      "id": "D06-033"
+    },
+    "troy|hooper": {
+      "firstname": "Troy",
+      "lastname": "Hooper",
+      "photo": "Troy_Hooper_20260306_091302.jpg",
+      "id_number": 34,
+      "id": "D06-034"
+    },
+    "jamal|park": {
+      "firstname": "Jamal",
+      "lastname": "Park",
+      "photo": "Jamal_Park_20260306_091405.jpg",
+      "id_number": 35,
+      "id": "D06-035"
     }
   }
 }

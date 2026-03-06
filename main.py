@@ -10,6 +10,10 @@ from typing import Any, Dict, List, Optional, Set
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
+# Allow very large photos (modern phone cameras can produce 100–200 MP images that
+# exceed PIL's default DecompressionBomb limit and would be silently skipped).
+Image.MAX_IMAGE_PIXELS = None
+
 # Module-level font cache: (font_path_or_None, size) -> font object
 _font_cache: Dict[tuple, ImageFont.ImageFont] = {}
 
@@ -23,11 +27,12 @@ PHOTO_FOLDER = "photos"
 OUTPUT_FOLDER = "output"
 REPORT_FOLDER = "report"
 DISTRICT_REGISTRY_FOLDER = "district_id_registry"
+RENDER_HISTORY_PATH = "render_history.json"
 DISTRICT_MIN = 1
 DISTRICT_MAX = 15
 
 # Photo box (top-left corner where the photo will be pasted)
-PHOTO_SIZE = (200, 200)
+PHOTO_SIZE = (300, 300)
 CONTENT_CENTER_X = 400
 PHOTO_TOP_Y = 315
 PHOTO_POSITION = (CONTENT_CENTER_X - (PHOTO_SIZE[0] // 2), PHOTO_TOP_Y)
@@ -505,8 +510,14 @@ def fit_font_size(
 
 
 def open_photo_correct_orientation(path: str) -> Image.Image:
-    # Fix EXIF rotation AND convert to RGBA to avoid paste issues
+    # Fix EXIF rotation AND convert to RGBA to avoid paste issues.
     img = Image.open(path)
+    # For JPEG files, request a reduced-resolution decode so that 100–200 MP photos
+    # are not fully decompressed into RAM before being resized down to PHOTO_SIZE.
+    try:
+        img.draft(None, (PHOTO_SIZE[0] * 4, PHOTO_SIZE[1] * 4))
+    except Exception:
+        pass  # draft() only works for JPEG; safe to ignore for other formats
     img = ImageOps.exif_transpose(img)
     return img.convert("RGBA")
 
@@ -584,21 +595,22 @@ def create_id_card(
         draw_centered_text(draw, CONTENT_CENTER_X, y, ln, font_small, COLOR_BLACK)
         y += text_height(draw, ln, font_small) + 2
 
-    # Photo
+    # Photo — try exact path first, then case-insensitive fallback for special characters
     photo_path = os.path.join(photo_folder, photo_filename) if photo_filename else ""
-    if photo_path and os.path.exists(photo_path):
+    resolved_photo_path = ""
+    if photo_filename:
+        if os.path.exists(photo_path):
+            resolved_photo_path = photo_path
+        else:
+            resolved_photo_path = find_photo_case_insensitive(photo_folder, photo_filename) or ""
+
+    if resolved_photo_path:
         try:
-            photo = open_photo_correct_orientation(photo_path)
-
-            # If still rotated weird (no EXIF / wrong EXIF), optional heuristic:
-            # If it's very tall vs wide, keep; if it's sideways and looks wrong, you can rotate:
-            # if photo.width > photo.height:
-            #     photo = photo.rotate(90, expand=True)
-
-            photo = photo.resize(PHOTO_SIZE)
+            photo = open_photo_correct_orientation(resolved_photo_path)
+            photo = ImageOps.fit(photo, PHOTO_SIZE, method=Image.LANCZOS)
             template.paste(photo, PHOTO_POSITION, mask=photo)
         except Exception as e:
-            print(f"[WARN] Photo error for '{photo_path}': {e}")
+            print(f"[WARN] Photo error for '{resolved_photo_path}': {e}")
     else:
         if photo_filename:
             print(f"[WARN] Photo not found: {photo_path}")
@@ -624,6 +636,141 @@ def validate_photos(rows: List[Dict[str, str]], photo_folder: str) -> None:
         print(f"[WARN] {len(missing)} photo(s) not found in '{photo_folder}':")
         for name in missing:
             print(f"       - {name}")
+
+
+def find_photo_case_insensitive(photo_folder: str, photo_filename: str) -> Optional[str]:
+    """Return the real on-disk path for photo_filename using a case-insensitive folder scan.
+    Handles filenames where characters like apostrophes differ between the CSV and the file."""
+    if not photo_filename or not os.path.isdir(photo_folder):
+        return None
+    lower_target = photo_filename.lower()
+    for name in os.listdir(photo_folder):
+        if name.lower() == lower_target:
+            return os.path.join(photo_folder, name)
+    return None
+
+
+def find_existing_card(output_folder: str, district_number: int, card_filename: str) -> Optional[str]:
+    """Scan all batch folders for the district and return the most recently modified matching card path."""
+    district_dir = os.path.join(output_folder, f"district_{district_number:02d}")
+    if not os.path.isdir(district_dir):
+        return None
+    best_path: Optional[str] = None
+    best_mtime = 0.0
+    for batch_dir in os.listdir(district_dir):
+        candidate = os.path.join(district_dir, batch_dir, card_filename)
+        if os.path.exists(candidate):
+            mtime = os.path.getmtime(candidate)
+            if mtime > best_mtime:
+                best_mtime = mtime
+                best_path = candidate
+    return best_path
+
+
+# ==========================
+# RENDER HISTORY
+# ==========================
+def get_render_key(assigned_id: str, district_number: int, role: str, firstname: str, lastname: str) -> str:
+    """Return a stable, unique key for a CSV row used to look up render history.
+
+    Athletes are keyed by their persistent assigned_id (e.g. 'D01-001').
+    Non-athletes are keyed by district + role + normalized name.
+    """
+    if assigned_id:
+        return assigned_id
+    person_key = normalize_person_key(firstname, lastname)
+    role_norm = normalize_spaces(role).lower()
+    return f"nonathl|{district_number}|{role_norm}|{person_key}"
+
+
+def load_render_history() -> Dict[str, Any]:
+    """Load render_history.json. Returns an empty history dict if missing or corrupt."""
+    if not os.path.exists(RENDER_HISTORY_PATH):
+        return {"version": 1, "generated_at": "", "rendered": {}}
+    try:
+        with open(RENDER_HISTORY_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        data.setdefault("version", 1)
+        data.setdefault("rendered", {})
+        return data
+    except Exception as e:
+        print(f"[WARN] Could not load render history ({e}); starting fresh.")
+        return {"version": 1, "generated_at": "", "rendered": {}}
+
+
+def build_render_history_from_output(
+    all_rows: List[Dict[str, str]],
+    registries: Dict[int, Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Initialize render history by scanning existing output PNGs against CSV rows.
+
+    Called automatically the first time render_history.json does not exist so that
+    previously generated cards are not re-rendered after the feature is first deployed.
+    """
+    print("[INFO] render_history.json not found — initializing from existing output files...")
+    rendered: Dict[str, Any] = {}
+
+    for row in all_rows:
+        firstname = get_csv_value(row, "firstname", "Firstname", "FIRSTNAME")
+        lastname = get_csv_value(row, "lastname", "Lastname", "LASTNAME")
+        role = get_csv_value(row, "Role", "role", "ROLE")
+        photo = get_csv_value(row, "Photo", "photo", "PHOTO")
+        district = get_csv_value(row, "District", "district", "distrct", "Distrct", "DISTRICT")
+        school = get_csv_value(row, "School", "school", "SCHOOL")
+
+        if not firstname and not lastname:
+            continue
+        if not district:
+            continue
+        try:
+            district_number = extract_district_number(district)
+        except ValueError:
+            continue
+
+        assigned_id = ""
+        if is_athlete_role(role):
+            person_key = normalize_person_key(firstname, lastname)
+            record = registries.get(district_number, {}).get("records", {}).get(person_key)
+            if isinstance(record, dict):
+                assigned_id = str(record.get("id", ""))
+
+        render_key = get_render_key(assigned_id, district_number, role, firstname, lastname)
+        if render_key in rendered:
+            continue
+
+        card_filename = safe_filename(f"{firstname}_{lastname}").upper() + ".png"
+        existing_path = find_existing_card(OUTPUT_FOLDER, district_number, card_filename)
+        if existing_path:
+            rendered_at = datetime.fromtimestamp(os.path.getmtime(existing_path)).strftime("%Y%m%d_%H%M%S")
+            batch_id = ""
+            for part in existing_path.replace("\\", "/").split("/"):
+                if part.startswith("batch_"):
+                    batch_id = part[len("batch_"):]
+                    break
+            rendered[render_key] = {
+                "firstname": firstname,
+                "lastname": lastname,
+                "role": role,
+                "district": district_number,
+                "school": school,
+                "photo": photo,
+                "assigned_id": assigned_id,
+                "rendered_at": rendered_at,
+                "batch_id": batch_id,
+                "output_path": existing_path,
+            }
+
+    print(f"[INFO] Initialized render history with {len(rendered)} existing card(s).")
+    return {"version": 1, "generated_at": "", "rendered": rendered}
+
+
+def save_render_history(history: Dict[str, Any]) -> None:
+    """Atomically save render history to disk (write to .tmp then os.replace)."""
+    history["generated_at"] = datetime.now().strftime("%Y%m%d_%H%M%S")
+    tmp_path = RENDER_HISTORY_PATH + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2, ensure_ascii=True)
+    os.replace(tmp_path, RENDER_HISTORY_PATH)
 
 
 def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None) -> None:
@@ -653,18 +800,17 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
     }
     modified_districts: Set[int] = set()
 
-    # Detect districts with no report file — rows for these districts bypass processed=YES
-    missing_report_districts: Set[int] = {
-        n for n in range(DISTRICT_MIN, DISTRICT_MAX + 1)
-        if not os.path.exists(district_report_file_path(REPORT_FOLDER, n))
-    }
-    if missing_report_districts:
-        print(f"[INFO] Missing report file(s) for district(s): {sorted(missing_report_districts)} — will rebuild from CSV.")
+    # Load (or initialize) the persistent render history
+    if not os.path.exists(RENDER_HISTORY_PATH):
+        render_history = build_render_history_from_output(all_rows, registries)
+        save_render_history(render_history)
+    else:
+        render_history = load_render_history()
 
     # Open template once
     template_image = Image.open(TEMPLATE_PATH).convert("RGBA")
 
-    stats = {"generated": 0, "skipped": 0, "rebuilt": 0, "card_exists": 0, "warnings": 0, "errors": 0}
+    stats = {"generated": 0, "skipped": 0, "card_exists": 0, "warnings": 0, "errors": 0}
 
     for i, row in enumerate(all_rows, start=1):
         try:
@@ -695,13 +841,8 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
             if district_filter is not None and district_number != district_filter:
                 continue
 
-            processed_flag = get_csv_value(row, "processed", "Processed", "PROCESSED")
-            if processed_flag.upper() == "YES":
-                if district_number not in missing_report_districts:
-                    stats["skipped"] += 1
-                    continue
-                stats["rebuilt"] += 1
-
+            # Always resolve the assigned_id first so it is available for the report
+            # regardless of whether rendering is skipped.
             assigned_id = ""
             if is_athlete_role(role):
                 assigned_id = assign_id_in_memory(
@@ -712,6 +853,31 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
                     photo_filename=photo,
                 )
                 modified_districts.add(district_number)
+
+            render_key = get_render_key(assigned_id, district_number, role, firstname, lastname)
+            history_entry = render_history["rendered"].get(render_key)
+            if history_entry:
+                # Already rendered in a previous batch — skip PNG generation but
+                # still write to the report so it stays up-to-date with the CSV.
+                rendered_at = history_entry.get("rendered_at", "")
+                output_path = history_entry.get("output_path", "")
+                stats["skipped"] += 1
+                report_rows_by_district[district_number].append(
+                    {
+                        "batch_timestamp": batch_timestamp,
+                        "district_number": str(district_number),
+                        "district_text": district,
+                        "assigned_id": assigned_id,
+                        "firstname": firstname,
+                        "lastname": lastname,
+                        "role": role,
+                        "school": school,
+                        "photo": photo,
+                        "output_file": output_path,
+                        "rendered_at": rendered_at,
+                    }
+                )
+                continue
 
             out_folder = district_output_folder(OUTPUT_FOLDER, district_number, batch_timestamp)
             expected_path = os.path.join(out_folder, safe_filename(f"{firstname}_{lastname}").upper() + ".png")
@@ -737,6 +903,18 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
                 print(f"[{i}/{total}] Saved: {output_path}")
                 stats["generated"] += 1
                 rendered_at = batch_timestamp
+            render_history["rendered"][render_key] = {
+                "firstname": firstname,
+                "lastname": lastname,
+                "role": role,
+                "district": district_number,
+                "school": school,
+                "photo": photo,
+                "assigned_id": assigned_id,
+                "rendered_at": rendered_at,
+                "batch_id": batch_timestamp,
+                "output_path": output_path,
+            }
             report_rows_by_district[district_number].append(
                 {
                     "batch_timestamp": batch_timestamp,
@@ -761,11 +939,12 @@ def batch_generate_id_cards(csv_file: str, district_filter: Optional[int] = None
     for district_number in modified_districts:
         save_district_registry(DISTRICT_REGISTRY_FOLDER, district_number, registries[district_number])
 
+    save_render_history(render_history)
     write_excel_reports(REPORT_FOLDER, batch_timestamp, report_rows_by_district)
 
     print(
         f"\n=== Done === generated={stats['generated']}  exists(skipped)={stats['card_exists']}"
-        f"  skipped(processed)={stats['skipped']}  rebuilt(missing report)={stats['rebuilt']}"
+        f"  skipped(history)={stats['skipped']}"
         f"  warnings={stats['warnings']}  errors={stats['errors']}"
     )
 

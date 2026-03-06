@@ -1,7 +1,7 @@
 {
   "district_number": 12,
   "district_label": "District 12",
-  "last_id_number": 70,
+  "last_id_number": 88,
   "records": {
     "maciel|forde": {
       "firstname": "Maciel",
@@ -13,7 +13,7 @@
     "kyrique|harcourt": {
       "firstname": "Kyrique",
       "lastname": "Harcourt",
-      "photo": "Kyrique_Harcourt_20260227_094400.jpg",
+      "photo": "Kyrique_Harcourt_20260306_112326.jpg",
       "id_number": 2,
       "id": "D12-002"
     },
@@ -492,6 +492,132 @@
       "photo": "Jaden_Henry_20260304_140251.jpg",
       "id_number": 70,
       "id": "D12-070"
+    },
+    "ezra|harte": {
+      "firstname": "Ezra",
+      "lastname": "Harte",
+      "photo": "Ezra_Harte_20260305_105032.jpg",
+      "id_number": 71,
+      "id": "D12-071"
+    },
+    "eyeon|glasgow": {
+      "firstname": "Eyeon",
+      "lastname": "Glasgow",
+      "photo": "Eyeon_Glasgow_20260306_085525.jpg",
+      "id_number": 72,
+      "id": "D12-072"
+    },
+    "ray|lyken": {
+      "firstname": "Ray",
+      "lastname": "Lyken",
+      "photo": "Ray_Lyken_20260306_091547.jpg",
+      "id_number": 73,
+      "id": "D12-073"
+    },
+    "shorwin|edmonds": {
+      "firstname": "Shorwin",
+      "lastname": "Edmonds",
+      "photo": "Shorwin_Edmonds_20260306_091859.jpg",
+      "id_number": 74,
+      "id": "D12-074"
+    },
+    "conrad|mentore": {
+      "firstname": "Conrad",
+      "lastname": "Mentore",
+      "photo": "Conrad_Mentore_20260306_092205.jpg",
+      "id_number": 75,
+      "id": "D12-075"
+    },
+    "kshawndow|dowridge": {
+      "firstname": "Kshawndow",
+      "lastname": "Dowridge",
+      "photo": "Kshawndow_Dowridge_20260306_092622.jpg",
+      "id_number": 76,
+      "id": "D12-076"
+    },
+    "daniel|haynes": {
+      "firstname": "Daniel",
+      "lastname": "Haynes",
+      "photo": "Daniel_Haynes_20260306_094020.jpg",
+      "id_number": 77,
+      "id": "D12-077"
+    },
+    "jermaine|wong": {
+      "firstname": "Jermaine",
+      "lastname": "Wong",
+      "photo": "Jermaine_Wong_20260306_094251.jpg",
+      "id_number": 78,
+      "id": "D12-078"
+    },
+    "serena|cato": {
+      "firstname": "Serena",
+      "lastname": "Cato",
+      "photo": "Serena_Cato_20260306_095041.jpg",
+      "id_number": 79,
+      "id": "D12-079"
+    },
+    "jalicia|nurse": {
+      "firstname": "Jalicia",
+      "lastname": "Nurse",
+      "photo": "Jalicia_Nurse_20260306_095230.jpg",
+      "id_number": 80,
+      "id": "D12-080"
+    },
+    "etana|cornell": {
+      "firstname": "Etana",
+      "lastname": "Cornell",
+      "photo": "Etana_Cornell_20260306_095441.jpg",
+      "id_number": 81,
+      "id": "D12-081"
+    },
+    "jeremiah|layne": {
+      "firstname": "Jeremiah",
+      "lastname": "Layne",
+      "photo": "Jeremiah_Layne_20260306_101044.jpg",
+      "id_number": 82,
+      "id": "D12-082"
+    },
+    "annastacia|mcallister": {
+      "firstname": "Annastacia",
+      "lastname": "McAllister",
+      "photo": "Annastacia_McAllister_20260306_101818.jpg",
+      "id_number": 83,
+      "id": "D12-083"
+    },
+    "maqueda|welchman": {
+      "firstname": "Maqueda",
+      "lastname": "Welchman",
+      "photo": "Maqueda_Welchman_20260306_110323.jpg",
+      "id_number": 84,
+      "id": "D12-084"
+    },
+    "keion|lynch": {
+      "firstname": "Keion",
+      "lastname": "Lynch",
+      "photo": "Keion_Lynch_20260306_110702.jpg",
+      "id_number": 85,
+      "id": "D12-085"
+    },
+    "aliyana|austin": {
+      "firstname": "Aliyana",
+      "lastname": "Austin",
+      "photo": "Aliyana_Austin_20260306_113608.jpg",
+      "id_number": 86,
+      "id": "D12-086"
+    },
+    "laurel|george": {
+      "firstname": "Laurel",
+      "lastname": "George",
+      "photo": "Laurel_George_20260306_115728.jpg",
+      "id_number": 87,
+      "id": "D12-087"
+    },
+    "rebecca|singh": {
+      "firstname": "Rebecca",
+      "lastname": "Singh",
+      "photo": "Rebecca_Singh_20260306_154629.jpg",
+      "id_number": 88,
+      "id": "D12-088"
     }
   }
 }
