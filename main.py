@@ -671,10 +671,10 @@ def find_existing_card(output_folder: str, district_number: int, card_filename: 
 # RENDER HISTORY
 # ==========================
 def get_render_key(assigned_id: str, district_number: int, role: str, firstname: str, lastname: str) -> str:
-    """Return a stable, unique key for a CSV row used to look up render history.
+    """Stable unique key per CSV row for the render history.
 
-    Athletes are keyed by their persistent assigned_id (e.g. 'D01-001').
-    Non-athletes are keyed by district + role + normalized name.
+    Athletes use their persistent assigned_id (e.g. 'D01-001').
+    Non-athletes use district + role + normalized name.
     """
     if assigned_id:
         return assigned_id
